@@ -4,7 +4,7 @@
 
 #include <QString>
 
-ControlAreaBuilder ControlArea::calculate(string areaNumbering){ return ControlAreaBuilder{areaNumbering}; }
+ControlAreaBuilder ControlArea::create(string areaNumbering){ return ControlAreaBuilder{areaNumbering}; }
 
 ostream& operator<<(ostream& os, const ControlArea& obj)
 {
@@ -19,15 +19,5 @@ ostream& operator<<(ostream& os, const ControlArea& obj)
               << "m_tempWaterIn " << obj.m_tempWaterIn
               << "m_tempAirIn " << obj.m_tempAirIn;
 }
-
-QString getObjectString(){
-    QString str;
-    //str = str + m_areaNumbering;
-    return "2";
-}
-
-void ControlArea::calcTempWaterOut(){}
-
-void ControlArea::calcTempAirOut(){}
 
 

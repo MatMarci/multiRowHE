@@ -47,17 +47,14 @@ ControlAreaBuilder&  ControlAreaBuilder::setTempWaterIn(float tempWaterIn){
     return *this;
 }
 
-ControlAreaBuilder&  ControlAreaBuilder::setTempWaterOut(float tempWaterOut){
-    controlArea.m_tempWaterOut = tempWaterOut;
-    return *this;
-}
-
 ControlAreaBuilder&  ControlAreaBuilder::setTempAirIn(float tempAirIn){
     controlArea.m_tempAirIn = tempAirIn;
     return *this;
 }
 
-ControlAreaBuilder&  ControlAreaBuilder::setTempAirOut(float tempAirOut){
+ControlAreaBuilder&  ControlAreaBuilder::calculate(){
+    float tempAirOut = 1.0;
+
     controlArea.m_tempAirOut = tempAirOut;
     return *this;
 }

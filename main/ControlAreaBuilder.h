@@ -23,8 +23,8 @@ public:
 
     ControlAreaBuilder&  parameters();
     ControlAreaBuilder&  setTempWaterIn(float tempWaterIn);
-    ControlAreaBuilder&  setTempWaterOut(float tempWaterOut);
     ControlAreaBuilder&  setTempAirIn(float tempAirIn);
-    ControlAreaBuilder&  setTempAirOut(float tempAirOut);
+
+    ControlAreaBuilder&  calculate();
 
 };

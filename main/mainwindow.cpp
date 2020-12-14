@@ -3,6 +3,7 @@
 #include "iostream"
 #include "ControlArea.h"
 #include "ControlAreaBuilder.h"
+#include "ArrayOperation.h"
 
 #include <QDebug>
 #include <QFile>
@@ -30,13 +31,12 @@ void MainWindow::on_pushButton_clicked()
     QString text = ui->param1->toPlainText();
     //logic
 
-    int rowsTemp[4][6];
-    bool isFlowAlternately = true;
-    float tempIn = 20.00;
+    //int rowsTemp[4][6];
+    //bool isFlowAlternately = true;
 
     //rows 0 is dedicated for determination of direction
     //flow from Left to Right = 0, from Right to Left = 1
-    for(int i=0; i<4; i++){
+    /*for(int i=0; i<4; i++){
         if(isFlowAlternately == true && ((i%2 == 0) || i == 0) && i != 1){
             rowsTemp[i][0] = 0;
         } else if(isFlowAlternately == true && ((i%2 != 0) || i ==1)){
@@ -44,47 +44,47 @@ void MainWindow::on_pushButton_clicked()
         } else {
             rowsTemp[i][0] = 0;
         }
-   }
+    }*/
+    ControlArea areas[20];
 
+    int k = 0;
     for(int i=0; i<4; i++){
-
+        for(int j=0; j<5; j++){
+            ControlArea controlArea = ControlArea::create("1;1")
+                                            .setWaterFlowDirection(0)
+                                            .areaDescription()
+                                                .setRowNumber(i)
+                                                .setControlAreaNumber(j);
+            areas[k] = controlArea;
+            k++;
+        }
     }
 
-    ControlArea controlArea1 = ControlArea::calculate("1;1")
+    ControlArea controlArea1 = ControlArea::create("1;1")
                                     .setWaterFlowDirection(0)
                                     .areaDescription()
                                         .setRowNumber(1)
                                         .setControlAreaNumber(1)
                                     .parameters()
                                         .setTempAirIn(20.00)
-                                        .setTempWaterIn(85.00);
-
-    //controlArea1.
-
-    //cout << "wef";
-    //cout<< controlArea1;
+                                        .setTempWaterIn(85.00)
+                                    .calculate();
 
 
-    //QString textOut;
-    for(int i=0; i<4; ++i){
-        //
-        //textOut = textOut + " - " + << controlArea1);
+
+    QFile file("C:/Users/Dell/Documents/Repositories/multiRowHE_cpp/multiRowHE/programFiles/testResult.txt");
+    if(file.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text))
+    {
+        QTextStream stream(&file);
+        ArrayOperation ao;
+        QString txt = QString::fromStdString(ao.getParameters(controlArea1));
+        stream << "Center Point: " + txt <<'\n';
+        stream << "Center Point: " + txt <<'\n';
+        stream << "Center Point: " + txt <<'\n';
+        file.close();
+        qDebug() << "Writing finished";
     }
 
-    QFile file("C:/Users/Dell/Documents/Programs/programFiles/testResult.txt");
-        if(file.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text))
-          {
-              // We're going to streaming text to the file
-              QTextStream stream(&file);
-
-              stream << "Center Point: "  <<'\n';
-
-              file.close();
-              qDebug() << "Writing finished";
-          }
-
-
-
     // -- logic
-    //ui->results->setText(controlArea1);
+    //ui->results->setText(txt);
 }

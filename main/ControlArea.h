@@ -1,12 +1,14 @@
 #pragma once
-#include "iostream"
 
+#include "ArrayOperation.h"
+#include "iostream"
 #include <QString>
 
 using namespace std;
 
 
 class  ControlAreaBuilder;
+class ArrayOperation;
 
 class ControlArea
 {
@@ -31,13 +33,12 @@ private:
     ControlArea(string areaNumbering) : m_areaNumbering(areaNumbering) {}
 
 
+
 public:
+    ControlArea() {}
+
     friend class ControlAreaBuilder;
+    friend class ArrayOperation;
     friend ostream& operator<<(ostream&  os, const ControlArea& obj);
-    static ControlAreaBuilder calculate(string areaNumbering);
-
-    QString getObjectString();
-
-    void calcTempWaterOut();
-    void calcTempAirOut();
+    static ControlAreaBuilder create(string areaNumbering);
 };
