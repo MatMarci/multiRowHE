@@ -64,6 +64,7 @@ void MainWindow::on_pushButton_clicked()
     //cout << "wef";
     //cout<< controlArea1;
 
+
     //QString textOut;
     for(int i=0; i<4; ++i){
         //
