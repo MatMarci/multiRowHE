@@ -3,12 +3,13 @@
 #include "ArrayOperation.h"
 #include "iostream"
 #include <QString>
+#include <list>
 
 using namespace std;
 
 
 class  ControlAreaBuilder;
-class ArrayOperation;
+//class ArrayOperation;
 
 class ControlArea
 {
@@ -30,6 +31,13 @@ private:
     float m_tempAirIn;
     float m_tempAirOut;
 
+    list<float> m_tempsWaterIn;
+    list<float> m_tempsWaterOut;
+    list<float> m_tempsAirIn;
+    list<float> m_tempsAirOut;
+
+    int m_iteration;
+
     ControlArea(string areaNumbering) : m_areaNumbering(areaNumbering) {}
 
 
@@ -41,4 +49,14 @@ public:
     friend class ArrayOperation;
     friend ostream& operator<<(ostream&  os, const ControlArea& obj);
     static ControlAreaBuilder create(string areaNumbering);
+
+
+    list<float> tempsWaterIn() const;
+    void setTempsWaterIn(float tempWaterIn);
+    list<float> tempsWaterOut() const;
+    void setTempsWaterOut(float tempWaterOut);
+    list<float> tempsAirIn() const;
+    void setTempsAirIn(float tempAirIn);
+    list<float> tempsAirOut() const;
+    void setTempsAirOut(float tempAirOut);
 };

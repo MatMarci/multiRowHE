@@ -1,7 +1,8 @@
 #pragma once
 
-#include "ControlArea.h"
-#include "string"
+#include <list>
+
+//#include "ControlArea.h"
 
 using namespace std;
 
@@ -10,8 +11,8 @@ class ControlArea;
 class ArrayOperation
 {
 
+    list<ControlArea> areas;
+
 public:
-    string getParameters(ControlArea);
-
-
+    list<ControlArea> initalizeModel(bool isFlowAlternately);
 };

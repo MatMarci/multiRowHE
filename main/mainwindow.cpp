@@ -31,56 +31,35 @@ void MainWindow::on_pushButton_clicked()
     QString text = ui->param1->toPlainText();
     //logic
 
-    //int rowsTemp[4][6];
-    //bool isFlowAlternately = true;
+    //config :
+    bool isFlowAlternately = true;
+    float eta = 0.001;
+    //config
 
-    //rows 0 is dedicated for determination of direction
-    //flow from Left to Right = 0, from Right to Left = 1
-    /*for(int i=0; i<4; i++){
-        if(isFlowAlternately == true && ((i%2 == 0) || i == 0) && i != 1){
-            rowsTemp[i][0] = 0;
-        } else if(isFlowAlternately == true && ((i%2 != 0) || i ==1)){
-            rowsTemp[i][0] = 1;
-        } else {
-            rowsTemp[i][0] = 0;
-        }
-    }*/
-    ControlArea areas[20];
+    //check if this way to initialize model provide original list from ArrayOperation class
+    ArrayOperation ao;
+    list<ControlArea> areas = ao.initalizeModel(isFlowAlternately);
+    ao.initalizeModel(isFlowAlternately);
 
-    int k = 0;
-    for(int i=0; i<4; i++){
-        for(int j=0; j<5; j++){
-            ControlArea controlArea = ControlArea::create("1;1")
-                                            .setWaterFlowDirection(0)
-                                            .areaDescription()
-                                                .setRowNumber(i)
-                                                .setControlAreaNumber(j);
-            areas[k] = controlArea;
-            k++;
-        }
+    int i=0;
+    do {
+        //areas[i];
+        i++;
     }
-
-    ControlArea controlArea1 = ControlArea::create("1;1")
-                                    .setWaterFlowDirection(0)
-                                    .areaDescription()
-                                        .setRowNumber(1)
-                                        .setControlAreaNumber(1)
-                                    .parameters()
-                                        .setTempAirIn(20.00)
-                                        .setTempWaterIn(85.00)
-                                    .calculate();
-
+    while(false);
 
 
     QFile file("C:/Users/Dell/Documents/Repositories/multiRowHE_cpp/multiRowHE/programFiles/testResult.txt");
     if(file.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text))
     {
         QTextStream stream(&file);
-        ArrayOperation ao;
-        QString txt = QString::fromStdString(ao.getParameters(controlArea1));
-        stream << "Center Point: " + txt <<'\n';
-        stream << "Center Point: " + txt <<'\n';
-        stream << "Center Point: " + txt <<'\n';
+        //ArrayOperation ao;
+        //list<float> tempsAirIn = areas[0].tempsAirIn();
+        //float test = tempsAirIn.front();
+        //QString txt = QString::number(test);
+        stream << "Row, Area, TempAirIn, TampAirOut, TempWaterIn, TempWaterOut" <<'\n';
+        //stream << txt <<'\n';
+
         file.close();
         qDebug() << "Writing finished";
     }

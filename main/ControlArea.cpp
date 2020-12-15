@@ -20,4 +20,46 @@ ostream& operator<<(ostream& os, const ControlArea& obj)
               << "m_tempAirIn " << obj.m_tempAirIn;
 }
 
+list<float> ControlArea::tempsAirIn() const
+{
+    return m_tempsAirIn;
+}
+
+void ControlArea::setTempsAirIn(float tempAirIn)
+{
+    m_tempsAirIn.push_front(tempAirIn);
+}
+
+list<float> ControlArea::tempsAirOut() const
+{
+    return m_tempsAirOut;
+}
+
+void ControlArea::setTempsAirOut(float tempAirOut)
+{
+    m_tempsAirOut.push_front(tempAirOut);
+}
+
+list<float> ControlArea::tempsWaterIn() const
+{
+    return m_tempsWaterIn;
+}
+
+void ControlArea::setTempsWaterIn(float tempWaterIn)
+{
+    m_tempsWaterIn.push_front(tempWaterIn);
+}
+
+list<float> ControlArea::tempsWaterOut() const
+{
+    return m_tempsWaterOut;
+}
+
+void ControlArea::setTempsWaterOut(float tempWaterOut)
+{
+    m_tempsWaterOut.push_front(tempWaterOut);
+}
+
+
+
 
