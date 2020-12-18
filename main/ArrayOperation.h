@@ -1,6 +1,7 @@
 #pragma once
 
-#include <list>
+#include <map>
+#include <vector>
 
 //#include "ControlArea.h"
 
@@ -11,8 +12,9 @@ class ControlArea;
 class ArrayOperation
 {
 
-    list<ControlArea> areas;
+    map<int, vector<ControlArea>> areas;
 
 public:
-    list<ControlArea> initalizeModel(bool isFlowAlternately);
+    map<int, vector<ControlArea>> initalizeModel(bool isFlowAlternately);
+    void setAirAndWaterFlow(bool isFlowAlternately);
 };

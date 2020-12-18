@@ -12,6 +12,7 @@ SOURCES += \
     ArrayOperation.cpp \
     ControlArea.cpp \
     ControlAreaBuilder.cpp \
+    ThermalCalculation.cpp \
     main.cpp \
     mainwindow.cpp
 
@@ -19,6 +20,7 @@ HEADERS += \
     ArrayOperation.h \
     ControlArea.h \
     ControlAreaBuilder.h \
+    ThermalCalculation.h \
     mainwindow.h
 
 FORMS += \

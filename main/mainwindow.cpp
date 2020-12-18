@@ -38,12 +38,13 @@ void MainWindow::on_pushButton_clicked()
 
     //check if this way to initialize model provide original list from ArrayOperation class
     ArrayOperation ao;
-    list<ControlArea> areas = ao.initalizeModel(isFlowAlternately);
+    map<int, vector<ControlArea>> areas = ao.initalizeModel(isFlowAlternately);
     ao.initalizeModel(isFlowAlternately);
 
     int i=0;
     do {
-        //areas[i];
+        //logic to calculate next i-airtemp and i-watertemp
+
         i++;
     }
     while(false);
