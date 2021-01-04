@@ -8,5 +8,5 @@ class ThermalCalculation
 
 
 public:
-    void airAndWaterOutTempCalc(map<int, vector<ControlArea>> areas, bool isFlowAlternately, int iteration);
+    void airAndWaterOutTempCalc(map<int, vector<ControlArea>> &areas, bool isFlowAlternately, int iteration);
 };

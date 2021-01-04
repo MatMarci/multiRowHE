@@ -46,24 +46,6 @@ void MainWindow::on_pushButton_clicked()
     int iteration = 0;
     //do {
         //logic to calculate next i-airtemp and i-watertemp
-        qDebug() << "setMain";
-        qDebug() << areas;
-        qDebug() << "next Air pointer";
-        qDebug() << ((*areas)[0])[0].nextAirAreaPointer;
-        qDebug() << ((*areas)[0])[0].nextAirAreaPointer->m_rowNumber;
-        qDebug() << ((*areas)[0])[0].nextAirAreaPointer->m_controlAreaNumber;
-        qDebug() << "pointer 1:4";
-        qDebug() << &(((*areas)[1])[4]);
-        qDebug() << "pointer 1:0";
-        qDebug() << &(((*areas)[1])[0]);
-        qDebug() << "next Water pointer";
-        qDebug() << ((*areas)[0])[0].nextWaterAreaPointer;
-        qDebug() << ((*areas)[0])[0].nextWaterAreaPointer->m_rowNumber;
-        qDebug() << ((*areas)[0])[0].nextWaterAreaPointer->m_controlAreaNumber;
-        qDebug() << "pointer 0:1";
-        qDebug() << &(((*areas)[0])[1]);
-        qDebug() << "pointer 1:0";
-        qDebug() << &(((*areas)[1])[0]);
 
         tc.airAndWaterOutTempCalc(*areas, isFlowAlternately, iteration);
         iteration++;
