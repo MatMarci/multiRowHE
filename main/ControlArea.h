@@ -38,6 +38,8 @@ public:
     friend class ControlAreaBuilder;
     friend class ArrayOperation;
     friend class ThermalCalculation;
+    friend class FileParser;
+    friend class MainWindow;
     friend ostream& operator<<(ostream&  os, const ControlArea& obj);
     static ControlAreaBuilder create(string areaNumbering);
 

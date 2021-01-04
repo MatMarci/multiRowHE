@@ -12,6 +12,7 @@ SOURCES += \
     ArrayOperation.cpp \
     ControlArea.cpp \
     ControlAreaBuilder.cpp \
+    FileParser.cpp \
     ThermalCalculation.cpp \
     main.cpp \
     mainwindow.cpp
@@ -20,6 +21,7 @@ HEADERS += \
     ArrayOperation.h \
     ControlArea.h \
     ControlAreaBuilder.h \
+    FileParser.h \
     ThermalCalculation.h \
     mainwindow.h
 
