@@ -76,21 +76,23 @@ void ArrayOperation::setInitialValues(bool isFlowAlternately){
     for(auto row = 0; row < (int)(this->areas.size()); row++){ //iterate by keys
         if(row == 0 || row % 2 == 0 || !isFlowAlternately){
             for(auto area = 0; area < (int)(this->areas[row].size()); area++){ //iterate by vectors
-                if(row == 0){
+                //if(row == 0){
                     ((this->areas[row])[area]).setTempsAirIn(INIT_AIR_TEMP);
-                }
-                if(area == 0){
+                ((this->areas[row])[area]).setTempsAirOut(INIT_AIR_TEMP);
+                //}
+                //if(area == 0){
                     ((this->areas[row])[area]).setTempsWaterIn(INIT_WATER_TEMP);
-                }
-            }
-        } else if((row == 1 || row % 2 != 0) && isFlowAlternately){
-            for(int area = CONTROL_AREAS; area >= 0; area--){
-                if(row == 0){
-                    ((this->areas[row])[area]).setTempsAirIn(INIT_AIR_TEMP);
-                }
-                if(area == CONTROL_AREAS){
-                    ((this->areas[row])[area]).setTempsWaterIn(INIT_WATER_TEMP);
-                }
+                ((this->areas[row])[area]).setTempsWaterOut(INIT_WATER_TEMP);
+                //}
+            //}
+        //} else if((row == 1 || row % 2 != 0) && isFlowAlternately){
+            //for(int area = CONTROL_AREAS; area >= 0; area--){
+                //if(row == 0){
+                //    ((this->areas[row])[area]).setTempsAirIn(INIT_AIR_TEMP);
+                //}
+               // if(area == CONTROL_AREAS){
+               //     ((this->areas[row])[area]).setTempsWaterIn(INIT_WATER_TEMP);
+               // }
             }
 
         }

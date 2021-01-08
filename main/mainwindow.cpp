@@ -47,11 +47,9 @@ void MainWindow::on_pushButton_clicked()
     //do {
         //logic to calculate next i-airtemp and i-watertemp
 
-        tc.airAndWaterOutTempCalc(*areas, isFlowAlternately, iteration);
-        iteration++;
-
-        if(iteration > 0){
-
+        if(iteration <3){
+            tc.airAndWaterOutTempCalc(*areas, isFlowAlternately, iteration);
+            iteration++;
         }
     //}
     //while(iteration < 5);
