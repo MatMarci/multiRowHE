@@ -16,5 +16,5 @@ class ArrayOperation
 public:
     map<int, vector<ControlArea>>* initalizeModel(bool isFlowAlternately);
     void setAirAndWaterFlow(bool isFlowAlternately);
-    void setInitialValues(bool isFlowAlternately);
+    void setInitialValues(map<int, vector<ControlArea>> &areas, bool isFlowAlternately);
 };

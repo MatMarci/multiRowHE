@@ -44,15 +44,13 @@ void MainWindow::on_pushButton_clicked()
     ThermalCalculation tc;
 
     int iteration = 0;
-    //do {
+    do {
         //logic to calculate next i-airtemp and i-watertemp
-
-        if(iteration <3){
-            tc.airAndWaterOutTempCalc(*areas, isFlowAlternately, iteration);
-            iteration++;
-        }
-    //}
-    //while(iteration < 5);
+        ao.setInitialValues(*areas, isFlowAlternately); //set initial value in each iteration
+        tc.airAndWaterOutTempCalc(*areas, isFlowAlternately, iteration);
+        iteration++;
+    }
+    while(iteration < 20);
 
     QFile file("C:/Users/Dell/Documents/Repositories/multiRowHE_cpp/multiRowHE/programFiles/testResult.txt");
     if(file.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text))

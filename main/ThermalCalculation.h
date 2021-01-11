@@ -8,6 +8,8 @@ class ThermalCalculation
 
 public:
     void airAndWaterOutTempCalc(map<int, vector<ControlArea>> &areas, bool isFlowAlternately, int iteration);
+    void outTempCalc(ControlArea &area, int iteration, int row, int cArea);
+
     float airOutTempCalc(ControlArea area, int iteration);
     float waterOutTempCalc(ControlArea area, int iteration);
 
@@ -35,6 +37,7 @@ public:
 
 
     float airReynoldsNumbCalc(float airInTemp, float airOutTemp);
+    float airMaxVelocityCalc();
     float airPrandtlNumbCalc(float airInTemp, float airOutTemp);
     float airPrandtlNumbCalc(float airTemp);
 
@@ -49,6 +52,7 @@ public:
     float waterSpecHeatCalc(float waterTemp);
     float waterThermalConductCoefCalc(float waterTemp);
     float waterKinViscoCoefCalc(float waterTemp);
+    float waterDensCalc(float waterTemp);
 
     float airHydraulicDimCalc();
 
