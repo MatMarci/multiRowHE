@@ -1,20 +1,21 @@
 #pragma once
 
+#include <SimulationData.h>
 #include <map>
 #include <vector>
 
 using namespace std;
 
+//class SimulationData;
 class ControlArea;
 
 class ArrayOperation
 {
-
-    map<int, vector<ControlArea>> areas;
-    map<int, vector<ControlArea>> *areasPointer;
+    SimulationData simuData;
+    SimulationData *simuDataPointer;
 
 public:
-    map<int, vector<ControlArea>>* initalizeModel(bool isFlowAlternately);
+    SimulationData* initalizeModel(bool isFlowAlternately);
     void setAirAndWaterFlow(bool isFlowAlternately);
-    void setInitialValues(map<int, vector<ControlArea>> &areas, bool isFlowAlternately);
+    void setInitialValues(SimulationData &simuData, bool isFlowAlternately);
 };

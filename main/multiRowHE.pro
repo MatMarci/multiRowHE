@@ -13,6 +13,7 @@ SOURCES += \
     ControlArea.cpp \
     ControlAreaBuilder.cpp \
     FileParser.cpp \
+    SimulationData.cpp \
     ThermalCalculation.cpp \
     main.cpp \
     mainwindow.cpp
@@ -22,6 +23,7 @@ HEADERS += \
     ControlArea.h \
     ControlAreaBuilder.h \
     FileParser.h \
+    SimulationData.h \
     ThermalCalculation.h \
     mainwindow.h
 

@@ -1,17 +1,20 @@
 #pragma once
 
 #include "ControlArea.h"
-
+#include <SimulationData.h>
 
 class ThermalCalculation
 {
+    SimulationData *simuData;
 
 public:
-    void airAndWaterOutTempCalc(map<int, vector<ControlArea>> &areas, bool isFlowAlternately, int iteration);
+    ThermalCalculation(SimulationData *simuData);
+
+    void airAndWaterOutTempCalc(bool isFlowAlternately, int iteration);
     void outTempCalc(ControlArea &area, int iteration, int row, int cArea);
 
-    float airOutTempCalc(ControlArea area, int iteration);
-    float waterOutTempCalc(ControlArea area, int iteration);
+    float airOutTempCalc(ControlArea &area, int iteration);
+    float waterOutTempCalc(ControlArea &area, int iteration);
 
     float internalAvgAirTempCalc(ControlArea &area, int iteration);
     float avgWaterTempCalc(float waterInTemp, float waterOutTemp);
@@ -55,5 +58,8 @@ public:
     float waterDensCalc(float waterTemp);
 
     float airHydraulicDimCalc();
+
+    void airHeatPowerCalc();
+    void waterHeatPowerCalc();
 
 };

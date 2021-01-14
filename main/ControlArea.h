@@ -17,11 +17,6 @@ class ControlArea
     int m_rowNumber;
     int m_controlAreaNumber;
 
-    int m_nextAirRow;
-    int m_nextAirArea;
-    int m_nextWaterRow;
-    int m_nextWaterArea;
-
     vector<float> m_tempsWaterIn;
     vector<float> m_tempsWaterOut;
     vector<float> m_tempsAirIn;
@@ -40,6 +35,7 @@ public:
     friend class ThermalCalculation;
     friend class FileParser;
     friend class MainWindow;
+
     friend ostream& operator<<(ostream&  os, const ControlArea& obj);
     static ControlAreaBuilder create(string areaNumbering);
 
