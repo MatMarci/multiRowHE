@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.13.2, 2021-01-12T22:40:55. -->
+<!-- Written by QtCreator 4.13.2, 2021-01-19T11:02:32. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -64,7 +64,13 @@
     <value type="bool" key="AutoTest.Framework.QtQuickTest">true</value>
     <value type="bool" key="AutoTest.Framework.QtTest">true</value>
    </valuemap>
-   <valuemap type="QVariantMap" key="AutoTest.CheckStates"/>
+   <valuemap type="QVariantMap" key="AutoTest.CheckStates">
+    <value type="Qt::CheckState" key="C:/Users/Dell/Documents/Repositories/multiRowHE_cpp/multiRowHE_app/multiRowHE/main/ThermalCalculation_test.cpp:airDensCalc_test">Checked</value>
+    <value type="Qt::CheckState" key="C:/Users/Dell/Documents/Repositories/multiRowHE_cpp/multiRowHE_app/multiRowHE/main/ThermalCalculation_test.cpp:airKinViscoCoefCalc_test">Checked</value>
+    <value type="Qt::CheckState" key="C:/Users/Dell/Documents/Repositories/multiRowHE_cpp/multiRowHE_app/multiRowHE/main/ThermalCalculation_test.cpp:airSpecHeatCalc_test">Checked</value>
+    <value type="Qt::CheckState" key="C:/Users/Dell/Documents/Repositories/multiRowHE_cpp/multiRowHE_app/multiRowHE/main/ThermalCalculation_test.cpp:airThermalConductCoefCalc_test">Checked</value>
+    <value type="Qt::CheckState" key="C:/Users/Dell/Documents/Repositories/multiRowHE_cpp/multiRowHE_app/multiRowHE/main/ThermalCalculation_test.h:ThermalCalculation_test">Checked</value>
+   </valuemap>
    <value type="int" key="AutoTest.RunAfterBuild">0</value>
    <value type="bool" key="AutoTest.UseGlobal">true</value>
    <valuelist type="QVariantList" key="ClangCodeModel.CustomCommandLineKey">
@@ -94,9 +100,9 @@
    <value type="int" key="ProjectExplorer.Target.ActiveDeployConfiguration">0</value>
    <value type="int" key="ProjectExplorer.Target.ActiveRunConfiguration">0</value>
    <valuemap type="QVariantMap" key="ProjectExplorer.Target.BuildConfiguration.0">
-    <value type="bool">true</value>
-    <value type="int" key="EnableQmlDebugging">0</value>
-    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">C:\Users\Dell\Documents\Programs\build-multiRowHE-Desktop_Qt_5_15_0_MinGW_64_bit-Debug</value>
+    <value type="bool">false</value>
+    <value type="int" key="EnableQmlDebugging">2</value>
+    <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory">C:\Users\Dell\Documents\Repositories\multiRowHE_cpp\multiRowHE_app\multiRowHE\main</value>
     <value type="QString" key="ProjectExplorer.BuildConfiguration.BuildDirectory.shadowDir">C:/Users/Dell/Documents/Programs/build-multiRowHE-Desktop_Qt_5_15_0_MinGW_64_bit-Debug</value>
     <valuemap type="QVariantMap" key="ProjectExplorer.BuildConfiguration.BuildStepList.0">
      <valuemap type="QVariantMap" key="ProjectExplorer.BuildStepList.Step.0">
@@ -325,8 +331,9 @@
     <valuelist type="QVariantList" key="CustomOutputParsers"/>
     <value type="int" key="PE.EnvironmentAspect.Base">2</value>
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
-    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:C:/Users/Dell/Documents/Repositories/multiRowHE_cpp/multiRowHE/main/multiRowHE.pro</value>
-    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">C:/Users/Dell/Documents/Repositories/multiRowHE_cpp/multiRowHE/main/multiRowHE.pro</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.DisplayName">multiRowHE2</value>
+    <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:C:/Users/Dell/Documents/Repositories/multiRowHE_cpp/multiRowHE_app/multiRowHE/main/multiRowHE.pro</value>
+    <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">C:/Users/Dell/Documents/Repositories/multiRowHE_cpp/multiRowHE_app/multiRowHE/main/multiRowHE.pro</value>
     <value type="QString" key="RunConfiguration.Arguments"></value>
     <value type="bool" key="RunConfiguration.Arguments.multi">false</value>
     <value type="QString" key="RunConfiguration.OverrideDebuggerStartup"></value>
@@ -337,7 +344,7 @@
     <value type="bool" key="RunConfiguration.UseQmlDebugger">false</value>
     <value type="bool" key="RunConfiguration.UseQmlDebuggerAuto">true</value>
     <value type="QString" key="RunConfiguration.WorkingDirectory"></value>
-    <value type="QString" key="RunConfiguration.WorkingDirectory.default">C:/Users/Dell/Documents/Programs/build-multiRowHE-Desktop_Qt_5_15_0_MinGW_64_bit-Debug</value>
+    <value type="QString" key="RunConfiguration.WorkingDirectory.default">C:/Users/Dell/Documents/Repositories/multiRowHE_cpp/multiRowHE_app/multiRowHE/main</value>
    </valuemap>
    <value type="int" key="ProjectExplorer.Target.RunConfigurationCount">1</value>
   </valuemap>

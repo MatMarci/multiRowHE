@@ -17,5 +17,6 @@ class ArrayOperation
 public:
     SimulationData* initalizeModel(bool isFlowAlternately);
     void setAirAndWaterFlow(bool isFlowAlternately);
-    void setInitialValues(SimulationData &simuData, bool isFlowAlternately);
+    void setInitialValues(bool isFlowAlternately);
+    float avgErrorCalc(int iteration);
 };

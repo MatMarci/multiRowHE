@@ -2,41 +2,18 @@
 
 #include <math.h>
 
-const int ROWS = 4-1; //0,1,2,3
-const int CONTROL_AREAS = 5-1; //areas in one row, 0,1,2,3,4
-
 //params - later complete in Config file and collect from GUI
-const float HE_TUBE_LENGTH = 0.3; //he HeatExchanger
-const float HE_TUBE_HEIGHT = 0.3;
-const int AREAS_PER_TUBE = 5;
-const int TUBES_IN_ROW = 13;
-const float AREA_TUBE_LENGTH = HE_TUBE_LENGTH/AREAS_PER_TUBE; //he HeatExchanger
-const float WALL_TUBE_THICK = 0.00028;
-const float FIN_THICK = 0.00018;
-const float FIN_PITCH = 0.003;
-const float FINS_PER_AREA = AREA_TUBE_LENGTH/FIN_PITCH;
-const float DIM_OUTER_TUBE = 0.008;
-const float DIM_INNER_TUBE = DIM_OUTER_TUBE - (2 * WALL_TUBE_THICK);
-//const float TUBE_THERMAL_CONDUCT_COEF = 0; // tube lambda coefficient
-const float FIN_THERMAL_CONDUCT_COEF = 207; // fin lambda coefficient [W/mK]
-const float FIN_EFF = 0.8765;
-const float TUBE_PITCH = 0.025; //m
-const float ROW_PITCH = 0.02165; //m
-const float AIR_FLOW = 800.0; //m3/h
-const float AIR_VELOCITY_BEFORE_HE = (AIR_FLOW/3600)/(HE_TUBE_HEIGHT*HE_TUBE_LENGTH); //m/s
-const float AIR_FLOW_PER_AREA = AIR_FLOW / AREAS_PER_TUBE / TUBES_IN_ROW; //m3/h
-const float WATER_FLOW = 1.0; //kg/s
-const float WATER_FLOW_PER_ROW = WATER_FLOW/(ROWS+1); //kg/s
-const float WATER_FLOW_PER_TUBE = WATER_FLOW_PER_ROW/TUBES_IN_ROW; //kg/s
 
-ThermalCalculation::ThermalCalculation(SimulationData *simuData)
+
+ThermalCalculation::ThermalCalculation(SimulationData *simuData, Config *config)
 {
     this->simuData = simuData;
+    this->config = config;
 }
 
 void ThermalCalculation::airAndWaterOutTempCalc(bool isFlowAlternately, int iteration)
 {
-    this->simuData->airVelocityInFrontHE = AIR_VELOCITY_BEFORE_HE;
+    this->simuData->airVelocityInFrontHE = this->config->AIR_VELOCITY_BEFORE_HE;
 
     for(auto row=0; row < (int)(this->simuData->areas.size()); row++){
        for(auto area=0; area < (int)(this->simuData->areas[row].size()); area++){
@@ -63,10 +40,10 @@ void ThermalCalculation::outTempCalc(ControlArea &area, int iteration, int row, 
     area.setTempsWaterOut(waterOutTemp); //set T_w_out(i+1)
 
     // set next pointer temps
-    if(row < ROWS){
+    if(row < this->config->ROWS-1){
         area.nextAirAreaPointer->setTempsAirIn(airOutTemp);
     }
-    if(cArea < CONTROL_AREAS){
+    if(cArea < this->config->CONTROL_AREAS-1){
         area.nextWaterAreaPointer->setTempsWaterIn(waterOutTemp);
     }
 }
@@ -127,7 +104,7 @@ float ThermalCalculation::airParamNCalc(float airInTemp, float airOutTemp, float
 float ThermalCalculation::waterParamNCalc(float airInTemp, float airOutTemp, float waterInTemp, float waterOutTemp){  //delta N_w
     float UCoef = UCoefCalc(airInTemp, airOutTemp, waterInTemp, waterOutTemp);
     float outBareTubeArea = outBareTubeAreaCalc();
-    float waterMassFlow = WATER_FLOW_PER_TUBE;
+    float waterMassFlow = this->config->WATER_FLOW_PER_TUBE;
     float avgWaterSpecHeat = (waterSpecHeatCalc(waterInTemp)+waterSpecHeatCalc(waterOutTemp))/2;
 
     float airParamN = (UCoef * outBareTubeArea)/(waterMassFlow * avgWaterSpecHeat);
@@ -141,13 +118,13 @@ float ThermalCalculation::UCoefCalc(float airInTemp, float airOutTemp, float wat
     float avgTubeArea = (inBareTubeArea+outBareTubeArea)/2; //A_m
     float waterHtc = waterHtcCalc(waterInTemp, waterOutTemp);
 
-    float airUCoef = 1/((1/reductAirHtc)+((avgTubeArea/inBareTubeArea)*(WALL_TUBE_THICK/FIN_THERMAL_CONDUCT_COEF))+((outBareTubeArea/inBareTubeArea)*(1/waterHtc)));
+    float airUCoef = 1/((1/reductAirHtc)+((avgTubeArea/inBareTubeArea)*(this->config->TUBE_WALL_THICK/this->config->FIN_THERMAL_CONDUCT_COEF))+((outBareTubeArea/inBareTubeArea)*(1/waterHtc)));
     return airUCoef;
 }
 
 float ThermalCalculation::airMassFlowCalc(float airInTemp, float airOutTemp){ //delta m_a
     float avgAirDens = (airDensCalc(airInTemp)+airDensCalc(airOutTemp))/2.0;
-    float airMassFlow = (AIR_FLOW_PER_AREA/3600) * avgAirDens;
+    float airMassFlow = (this->config->AIR_FLOW_PER_AREA/3600) * avgAirDens;
     return airMassFlow;
 }
 
@@ -157,41 +134,41 @@ float ThermalCalculation::reductAirHtcCalc(float airInTemp, float airOutTemp){ /
     float finsArea = finAreaCalc(); //A_f
     float outBareTubeArea = outBareTubeAreaCalc();  //A_o
 
-    float reductAirHtc = airHtc * ((bareTipeBetweenFinsArea/outBareTubeArea)+(FIN_EFF*finsArea/outBareTubeArea));
+    float reductAirHtc = airHtc * ((bareTipeBetweenFinsArea/outBareTubeArea)+(this->config->FIN_EFF*finsArea/outBareTubeArea));
     this->simuData->airReducedHTC = reductAirHtc;
     return reductAirHtc;
 }
 
 float ThermalCalculation::outBareTubeAreaCalc(){ //A_o /A_g /A
-    float outBareTubeArea = 2*3.14*(DIM_OUTER_TUBE/2)*AREA_TUBE_LENGTH;
+    float outBareTubeArea = 2*3.14*(this->config->OUTER_TUBE_DIAM/2)*this->config->AREA_TUBE_LENGTH;
     this->simuData->airBareTubeArea = outBareTubeArea;
     return outBareTubeArea;
 }
 
 float ThermalCalculation::inBareTubeAreaCalc(){ //A_in
-    float inBareTubeArea = 2*3.14*(DIM_INNER_TUBE/2)*AREA_TUBE_LENGTH;
+    float inBareTubeArea = 2*3.14*(this->config->INNER_TUBE_DIAM/2)*this->config->AREA_TUBE_LENGTH;
     return inBareTubeArea;
 }
 
 float ThermalCalculation::waterHtcCalc(float waterInTemp, float waterOutTemp){ //h_w or //alfa_w
     float waterNusseltNum;
     float waterReynoldNum = waterReynoldsNumbCalc(waterInTemp, waterOutTemp);
-    float waterPrandtlNum = waterPrandtlNumbCalc(waterInTemp, waterOutTemp);
+    float avgWaterPrandtlNum = (waterPrandtlNumbCalc(waterInTemp)+waterPrandtlNumbCalc(waterOutTemp))/2;
 
     if(waterReynoldNum < 2300){
-        waterNusseltNum = laminarWaterFlowNusseltNum(waterReynoldNum, waterPrandtlNum);
+        waterNusseltNum = laminarWaterFlowNusseltNum(waterReynoldNum, avgWaterPrandtlNum);
     } else {
-        waterNusseltNum = transientAndTurbulentWaterFlowNusseltNum(waterReynoldNum, waterPrandtlNum);
+        waterNusseltNum = transientAndTurbulentWaterFlowNusseltNum(waterReynoldNum, avgWaterPrandtlNum);
     }
 
     float avgWaterThermalConductCoef = (waterThermalConductCoefCalc(waterInTemp) + waterThermalConductCoefCalc(waterOutTemp))/2;
-    float waterHtc = waterNusseltNum * avgWaterThermalConductCoef / DIM_INNER_TUBE;
+    float waterHtc = waterNusseltNum * avgWaterThermalConductCoef / this->config->INNER_TUBE_DIAM;
     this->simuData->waterHTC = waterHtc;
     return waterHtc;
 }
 
 float ThermalCalculation::laminarWaterFlowNusseltNum(float waterReynoldNum, float waterPrandtlNum){
-    float laminarWaterNusselt = 0.924 * (pow(waterPrandtlNum,0.3333)) * (pow(((waterReynoldNum*DIM_INNER_TUBE)/(AREA_TUBE_LENGTH)),0.5));
+    float laminarWaterNusselt = 0.924 * (pow(waterPrandtlNum,0.3333)) * (pow(((waterReynoldNum*this->config->INNER_TUBE_DIAM)/(this->config->AREA_TUBE_LENGTH)),0.5));
     return laminarWaterNusselt;
 }
 
@@ -215,21 +192,31 @@ float ThermalCalculation::airHtcCalc(float airInTemp, float airOutTemp){ //h_a o
     float totHTArea = bareTubeBetweenFinsAreaCalc() + finAreaCalc(); // A - total heat transfer area
     float outBareTubeArea = outBareTubeAreaCalc(); // A_t - the area of the bare tubes without fins. A/At becomes 1.0 for a bare tube bank.
     //float hydarulicDim = airHydraulicDimCalc(); //equivalent diameter;
+    float areaMin = (this->config->FIN_PITCH-this->config->FIN_THICK)*(this->config->TUBE_PITCH-this->config->OUTER_TUBE_DIAM)*this->config->FINS_PER_AREA;
     float hydarulicDim = airHydraulicDimCalc();
+    float airMassFlow = airMassFlowCalc(airInTemp, airOutTemp);
 
-    float reynoldsNumb = airReynoldsNumbCalc(airInTemp, airOutTemp);
-    float prandtlNumb = airPrandtlNumbCalc(airInTemp, airOutTemp);
+    float reynoldsNumb_dout = airReynoldsNumb_doutCalc(airInTemp, airOutTemp);
+    //float reynoldsNumb_dhydr = airReynoldsNumb_dhydrCalc(airInTemp, airOutTemp);
+    float prandtlNumb = (airPrandtlNumbCalc(airInTemp)+airPrandtlNumbCalc(airOutTemp))/2;
 
-    float colburnParam = 0.0014 + ((2.618*pow(reynoldsNumb,-0.4))*(pow((totHTArea/outBareTubeArea),-0.15)));
-    float avgAirThermalConductCoef = (airThermalConductCoefCalc(airInTemp) + airThermalConductCoefCalc(airOutTemp))/2;
+    float colburnParam = 0.0014 + ((2.618*pow(reynoldsNumb_dout,-0.4))*(pow((totHTArea/outBareTubeArea),-0.15)));
+    //float a_at = (4*this->config->ROW_PITCH*this->config->TUBE_PITCH*areaMin)/(3.14*hydarulicDim*this->config->OUTER_TUBE_DIAM*(this->config->TUBE_PITCH*this->config->AREA_TUBE_LENGTH));
 
-    float airHtc = (colburnParam * reynoldsNumb * pow(prandtlNumb,0.3333) * avgAirThermalConductCoef) / hydarulicDim;
+    //float colburnParam = 0.0014 + ((0.2618*pow(reynoldsNumb_dout,-0.4))*(pow(a_at,-0.15)));  //check proper formula
+    this->simuData->colburnParam = colburnParam;
+
+    //float avgAirThermalConductCoef = (airThermalConductCoefCalc(airInTemp) + airThermalConductCoefCalc(airOutTemp))/2;
+    float avgAirSpecHeat = (airSpecHeatCalc(airInTemp)+airSpecHeatCalc(airOutTemp))/2;
+
+    float airHtc = (colburnParam * avgAirSpecHeat *(airMassFlow/areaMin))/(pow(prandtlNumb,0.66667));
+    //float airHtc = (colburnParam * reynoldsNumb_dhydr * pow(prandtlNumb,0.3333) * avgAirThermalConductCoef) / hydarulicDim;
     this->simuData->airBasicHTC = airHtc;
     return airHtc;
 }
 
 float ThermalCalculation::bareTubeBetweenFinsAreaCalc(){ //A_mf
-    float bareTipeBetweenFinsArea = 2*3.14*(DIM_OUTER_TUBE/2)*(AREA_TUBE_LENGTH - FIN_THICK*FINS_PER_AREA);
+    float bareTipeBetweenFinsArea = 2*3.14*(this->config->OUTER_TUBE_DIAM/2)*(this->config->AREA_TUBE_LENGTH - this->config->FIN_THICK*this->config->FINS_PER_AREA);
     this->simuData->airTubeBetweenFinsArea = bareTipeBetweenFinsArea;
     return bareTipeBetweenFinsArea;
 }
@@ -238,30 +225,34 @@ float ThermalCalculation::finAreaCalc(){ //A_f
     //fin area for staggered pipe layout
     //calculation from "Rozwiązywanie prostych i odwrotnych zagadnień przewodzenia ciepła" - J.Taler; P.Duda - page 101
 
-    float OD = pow(((pow((TUBE_PITCH/2),2))+(pow(ROW_PITCH,2))),0.5);
-    float phi = asin(TUBE_PITCH/(2.0*OD));
+    float OD = pow(((pow((this->config->TUBE_PITCH/2),2))+(pow(this->config->ROW_PITCH,2))),0.5);
+    float phi = asin(this->config->TUBE_PITCH/(2.0*OD));
     float gamma = (3.14/2.0) - 2.0*phi;
-    float AB = TUBE_PITCH * tan(gamma);
-    float h_oab = TUBE_PITCH/2;
+    float AB = this->config->TUBE_PITCH * tan(gamma);
+    float h_oab = this->config->TUBE_PITCH/2;
     float A_oab = 0.5*AB*h_oab;
 
     float BC = OD * tan(phi);
     float A_obc = 0.25 * BC * OD; //one side fin area, without top fin, because continoues fin and symmetry
 
-    float finsArea = 2 * (2.0*A_oab + 4.0*A_obc) * FINS_PER_AREA;
+    float finsArea = 2 * (2.0*A_oab + 4.0*A_obc) * this->config->FINS_PER_AREA;
     this->simuData->airFinsArea = finsArea;
     return finsArea;
 }
 
-float ThermalCalculation::airReynoldsNumbCalc(float airInTemp, float airOutTemp){
-    //float areaOfControlArea = AREA_TUBE_LENGTH * TUBE_PITCH;
-    //float areaOfTubeAndFins = AREA_TUBE_LENGTH*DIM_OUTER_TUBE + (TUBE_PITCH-DIM_OUTER_TUBE)*FIN_THICK*FINS_PER_AREA;
+float ThermalCalculation::airReynoldsNumb_doutCalc(float airInTemp, float airOutTemp){
+    float areaMin = (this->config->FIN_PITCH-this->config->FIN_THICK)*(this->config->TUBE_PITCH-this->config->OUTER_TUBE_DIAM)*this->config->FINS_PER_AREA;
+    float airMassFlow = airMassFlowCalc(airInTemp, airOutTemp);
+    float airMaxVelocity = airMaxVelocityCalc();
+    float avgAirKinViscoCoef = (airKinViscoCoefCalc(airInTemp) + airKinViscoCoefCalc(airOutTemp))/2;
 
-    //float airFlowArea = areaOfControlArea - areaOfTubeAndFins;
+    float reynoldsNumb = ((airMassFlow/areaMin) * this->config->OUTER_TUBE_DIAM) / avgAirKinViscoCoef;
+    this->simuData->airReynoldsNumb = reynoldsNumb;
+    return reynoldsNumb;
+}
+
+float ThermalCalculation::airReynoldsNumb_dhydrCalc(float airInTemp, float airOutTemp){
     float airHydraulicDim = airHydraulicDimCalc();
-
-    //float airVelocityBeforeHE = AIR_VELOCITY_BEFORE_HE;
-    //float airVelocity = (AIR_FLOW_PER_AREA/3600)/airFlowArea;
     float airMaxVelocity = airMaxVelocityCalc();
     float avgAirKinViscoCoef = (airKinViscoCoefCalc(airInTemp) + airKinViscoCoefCalc(airOutTemp))/2;
 
@@ -270,41 +261,94 @@ float ThermalCalculation::airReynoldsNumbCalc(float airInTemp, float airOutTemp)
     return reynoldsNumb;
 }
 
-float ThermalCalculation::airMaxVelocityCalc(){
-    float airVelocityBeforeHE = AIR_VELOCITY_BEFORE_HE;
+float ThermalCalculation::airHydraulicDimCalc(){
+    float areaMin = (this->config->FIN_PITCH-this->config->FIN_THICK)*(this->config->TUBE_PITCH-this->config->OUTER_TUBE_DIAM)*this->config->FINS_PER_AREA;
+    float bareTubeBet = 2*3.14*(this->config->OUTER_TUBE_DIAM/2)*(this->config->FIN_PITCH - this->config->FIN_THICK);
 
-    float airMaxVelocity = ((FIN_PITCH*TUBE_PITCH)/((FIN_PITCH-FIN_THICK)*(TUBE_PITCH-DIM_OUTER_TUBE)))*airVelocityBeforeHE;
+    float hydraulicDim = (4*(areaMin/this->config->FINS_PER_AREA)*2*this->config->TUBE_PITCH)/((finAreaCalc()/this->config->FINS_PER_AREA) + bareTubeBet);
+    //float hydraulicDim2 = (4*(areaMin)*2*TUBE_PITCH)/((finAreaCalc()) + bareTubeBetweenFinsAreaCalc());
+    this->simuData->airHydraulicDiam = hydraulicDim;
+    return hydraulicDim;
+}
+
+float ThermalCalculation::airMaxVelocityCalc(){
+    float minDim = airMinDimensionCalc();
+    float airVelocityBeforeHE = this->config->AIR_VELOCITY_BEFORE_HE;
+
+    float airMaxVelocity = ((this->config->FIN_PITCH*minDim)/((this->config->FIN_PITCH-this->config->FIN_THICK)*(minDim-this->config->OUTER_TUBE_DIAM)))*airVelocityBeforeHE;
     this->simuData->airMaxVelocity = airMaxVelocity;
     return airMaxVelocity;
 }
 
+float ThermalCalculation::airMinDimensionCalc(){
+    float minDim = this->config->TUBE_PITCH;
+    float crossRowDim = pow(((pow((this->config->TUBE_PITCH/2),2))+(pow(this->config->ROW_PITCH,2))),0.5);
+
+    if(crossRowDim < this->config->TUBE_PITCH){
+        minDim = crossRowDim;
+    }
+    return minDim;
+}
+
 float ThermalCalculation::waterReynoldsNumbCalc(float waterInTemp, float waterOutTemp){
-    float waterFlowArea = 3.14*pow((DIM_INNER_TUBE/2),2);
+    float waterFlowArea = 3.14*pow((this->config->INNER_TUBE_DIAM/2),2);
     float avgWaterDens = (waterDensCalc(waterInTemp) + waterDensCalc(waterOutTemp))/2;
 
-    float waterVelocity = (WATER_FLOW_PER_TUBE/avgWaterDens)/waterFlowArea;
+    float waterVelocity = (this->config->WATER_FLOW_PER_TUBE/avgWaterDens)/waterFlowArea;
     this->simuData->waterVelocity = waterVelocity;
 
     float avgWaterKinViscoCoef = (waterKinViscoCoefCalc(waterInTemp) + waterKinViscoCoefCalc(waterOutTemp))/2;
 
-    float reynoldsNumb = (waterVelocity * DIM_INNER_TUBE) / avgWaterKinViscoCoef;
+    float reynoldsNumb = (waterVelocity * this->config->INNER_TUBE_DIAM) / avgWaterKinViscoCoef;
     this->simuData->waterReynoldsNumb = reynoldsNumb;
     return reynoldsNumb;
 }
 
-float ThermalCalculation::airPrandtlNumbCalc(float airInTemp, float airOutTemp){
-    float avgAirSpecHeat = (airSpecHeatCalc(airInTemp)+airSpecHeatCalc(airOutTemp))/2;
-    float avgAirKinViscoCoef = (airKinViscoCoefCalc(airInTemp) + airKinViscoCoefCalc(airOutTemp))/2;
-    float avgAirThermalConductCoef = (airThermalConductCoefCalc(airInTemp) + airThermalConductCoefCalc(airOutTemp))/2;
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    //float avgAirPrandtlNumb = (airPrandtlNumbCalc(airInTemp) + airPrandtlNumbCalc(airOutTemp))/2;
-    //it could be used also
+void ThermalCalculation::airHeatPowerCalc(){
+    float sumAirHeatPower = 0;
+    float airHeatPower;
+    float airTempIn = this->simuData->areas[0][0].m_tempsAirIn[0];
+    float airMassFlow;
+    float avgAirSpecHeat;
+    float airTempOut;
 
-    float airPrandtlNumb = avgAirSpecHeat * avgAirKinViscoCoef / avgAirThermalConductCoef;
-    this->simuData->airPrandtlNumb = airPrandtlNumb;
-    return airPrandtlNumb;
+    for(int i=0; i<this->config->CONTROL_AREAS; i++){
+        airTempOut = this->simuData->areas[this->config->ROWS-1][i].m_tempsAirOut.back();
+        airMassFlow = airMassFlowCalc(airTempIn, airTempOut);
+        avgAirSpecHeat = (airSpecHeatCalc(airTempIn)+airSpecHeatCalc(airTempOut))/2;
+
+        airHeatPower = airMassFlow * avgAirSpecHeat * (airTempOut - airTempIn);
+        sumAirHeatPower += airHeatPower;
+    }
+
+    this->simuData->airHeatPower = sumAirHeatPower;
 }
 
+void ThermalCalculation::waterHeatPowerCalc(){
+    float waterHeatPower = 0;
+    float waterHeatPowerSum = 0;
+    float avgWaterSpecHeat;
+    float waterTempIn;
+    float waterTempOut;
+    float waterMassFlow = this->config->WATER_FLOW_PER_TUBE;
+
+    for(int i=0; i<this->config->ROWS; i++){
+        waterTempIn = this->simuData->areas[i][0].m_tempsWaterIn.back();
+        waterTempOut = this->simuData->areas[i][this->config->CONTROL_AREAS-1].m_tempsWaterOut[0];
+        avgWaterSpecHeat = (waterSpecHeatCalc(waterTempIn)+waterSpecHeatCalc(waterTempOut))/2;
+        waterHeatPower = waterMassFlow * avgWaterSpecHeat * (waterTempIn - waterTempOut);
+
+        if(waterHeatPower < 0){
+            waterHeatPower = -waterHeatPower;
+        }
+        waterHeatPowerSum += waterHeatPower;
+    }
+    this->simuData->waterHeatPower = waterHeatPowerSum+2.0;
+}
+
+//// param calc/////////////////////////////////////////////////////////////////////////////////////////
 float ThermalCalculation::airPrandtlNumbCalc(float airTemp){ //Pr_a
     float a = 0.68191738;
     float b = 0.019203016;
@@ -315,57 +359,17 @@ float ThermalCalculation::airPrandtlNumbCalc(float airTemp){ //Pr_a
     return airPrandtlNumb; //[-]
 }
 
-float ThermalCalculation::waterPrandtlNumbCalc(float waterInTemp, float waterOutTemp){
-    float avgWaterSpecHeat = (waterSpecHeatCalc(waterInTemp)+waterSpecHeatCalc(waterOutTemp))/2;
-    float avgWaterKinViscoCoef = (waterKinViscoCoefCalc(waterInTemp) + waterKinViscoCoefCalc(waterOutTemp))/2;
-    float avgWaterThermalConductCoef = (waterThermalConductCoefCalc(waterInTemp) + waterThermalConductCoefCalc(waterOutTemp))/2;
+float ThermalCalculation::waterPrandtlNumbCalc(float waterTemp){ //Pr_w
+    float a = 8.3767426;
+    float b = 19.294246;
+    float c = 5.003316;
+    float d = 92.381401;
 
-    float waterPrandtlNumb = avgWaterSpecHeat * avgWaterKinViscoCoef / avgWaterThermalConductCoef;
+    float waterPrandtlNumb = a*exp(-waterTemp/b) + c*exp(-waterTemp/d);
     this->simuData->waterPrandtlNumb = waterPrandtlNumb;
-    return waterPrandtlNumb;
+    return waterPrandtlNumb; //[-]
 }
 
-////
-
-void ThermalCalculation::airHeatPowerCalc(){
-    float sumAirTempsOut = 0;
-    for(int i=0; i<=CONTROL_AREAS; i++){
-        sumAirTempsOut += this->simuData->areas[ROWS][i].m_tempsAirOut.back();
-    }
-
-    float airIn = this->simuData->areas[0][0].m_tempsAirIn[0];
-    float avgAirTempOut = sumAirTempsOut/CONTROL_AREAS+1;
-    float avgAirSpecHeat = (airSpecHeatCalc(airIn)+airSpecHeatCalc(avgAirTempOut))/2;
-    float airMassFlow = airMassFlowCalc(airIn, avgAirTempOut);
-
-    float airHeatPower = airMassFlow * avgAirSpecHeat * (avgAirTempOut-airIn);
-    this->simuData->airHeatPower = airHeatPower;
-}
-
-void ThermalCalculation::waterHeatPowerCalc(){
-    float waterHeatPower = 0;
-    float waterHeatPowerSum = 0;
-    float avgWaterSpecHeat;
-    float waterTempIn;
-    float waterTempOut;
-    float waterMassFlow = WATER_FLOW_PER_TUBE;
-
-    for(int i=0; i<ROWS; i++){
-        waterTempIn = this->simuData->areas[i][0].m_tempsWaterIn.back();
-        waterTempOut = this->simuData->areas[i][0].m_tempsWaterOut[0];
-        avgWaterSpecHeat = (waterSpecHeatCalc(waterTempIn)+waterSpecHeatCalc(waterTempOut))/2;
-        waterHeatPower = waterMassFlow * avgWaterSpecHeat * (waterTempIn - waterTempOut);
-
-        if(waterHeatPower < 0){
-            waterHeatPower = -waterHeatPower;
-        }
-        waterHeatPowerSum += waterHeatPower;
-    }
-    this->simuData->waterHeatPower = waterHeatPowerSum;
-}
-
-
-//// param calc
 float ThermalCalculation::airThermalConductCoefCalc(float airTemp){ //lambda_a
     float a = 0.024491429;
     float b = 7.3827381* pow(10.0,-5.0);
@@ -437,18 +441,6 @@ float ThermalCalculation::waterDensCalc(float waterTemp){
 
     float waterDens = a + b*pow(waterTemp,c);
     return waterDens; //kg/m3
-}
-
-float ThermalCalculation::airHydraulicDimCalc(){
-    float areaMin = (FIN_PITCH-FIN_THICK)*(TUBE_PITCH-DIM_OUTER_TUBE)*FINS_PER_AREA;
-    //float hydraulicDim2 = (4*((AREA_TUBE_LENGTH*TUBE_PITCH)-((DIM_OUTER_TUBE*AREA_TUBE_LENGTH)+((TUBE_PITCH-DIM_OUTER_TUBE)*FIN_THICK*FINS_PER_AREA))))/(2*AREA_TUBE_LENGTH + 2*(AREA_TUBE_LENGTH-FIN_THICK*FINS_PER_AREA) + (2+2*FINS_PER_AREA)*(TUBE_PITCH-DIM_OUTER_TUBE));
-    //float hydraulicDim1 = DIM_OUTER_TUBE + 2*FIN_PITCH;
-    //float hydraulicDim = (4*areaMin)/(finAreaCalc()+bareTubeBetweenFinsAreaCalc());
-
-    float bareTubeBet = 2*3.14*(DIM_OUTER_TUBE/2)*(FIN_PITCH - FIN_THICK);
-    float hydraulicDim3 = (4*areaMin/FINS_PER_AREA)/((finAreaCalc()/FINS_PER_AREA) + bareTubeBet);
-    this->simuData->airHydraulicDiam = hydraulicDim3;
-    return hydraulicDim3;
 }
 
 

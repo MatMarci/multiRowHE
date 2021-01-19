@@ -71,16 +71,59 @@ void ArrayOperation::setAirAndWaterFlow(bool isFlowAlternately){
     }
 }
 
-void ArrayOperation::setInitialValues(SimulationData &simuData, bool isFlowAlternately){
+void ArrayOperation::setInitialValues(bool isFlowAlternately){
 
-    for(auto row = 0; row < (int)(simuData.areas.size()); row++){ //iterate by keys
-       for(auto area = 0; area < (int)(simuData.areas[row].size()); area++){ //iterate by vectors
+    for(auto row = 0; row < (int)(this->simuData.areas.size()); row++){ //iterate by keys
+       for(auto area = 0; area < (int)(this->simuData.areas[row].size()); area++){ //iterate by vectors
           if(row == 0){
-             ((simuData.areas[row])[area]).setTempsAirIn(INIT_AIR_TEMP);
+             ((this->simuData.areas[row])[area]).setTempsAirIn(INIT_AIR_TEMP);
           }
           if(area == 0){
-             ((simuData.areas[row])[area]).setTempsWaterIn(INIT_WATER_TEMP);
+             ((this->simuData.areas[row])[area]).setTempsWaterIn(INIT_WATER_TEMP);
           }
        }
     }
 }
+
+float ArrayOperation::avgErrorCalc(int iteration)
+{
+    float error = 0;
+    float tempAirOutCurrent;
+    float tempAirOutPrevious;
+
+    if(iteration > 0){
+        for(auto area=0; area < (int)(this->simuData.areas[3].size()); area++){
+           tempAirOutCurrent = (this->simuData.areas[3])[area].m_tempsAirOut[iteration];
+           tempAirOutPrevious = (this->simuData.areas[3])[area].m_tempsAirOut[iteration-1];
+           error += tempAirOutCurrent - tempAirOutPrevious;
+        }
+        error = error/5;
+    }
+    if(error < 0){
+        error = -error;
+    } else if (iteration == 0 && error == 0){
+        error = 1;
+    }
+
+    return error;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

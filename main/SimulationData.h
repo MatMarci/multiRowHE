@@ -17,6 +17,9 @@ class SimulationData{
     float waterFlowInOnePipe;
 
     //resultsData
+
+    float colburnParam;
+
         //air
     float airVelocityInFrontHE;
     float airMaxVelocity;
@@ -42,12 +45,14 @@ class SimulationData{
     //output
     float airHeatPower;
     float waterHeatPower;
+    int iteration;
 
     //tempsData
     map<int, vector<ControlArea>> areas;
 
 
     //methods
+
 
 
 public:

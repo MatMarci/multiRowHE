@@ -7,6 +7,7 @@
 #include "ThermalCalculation.h"
 #include "FileParser.h"
 
+#include <Config.h>
 #include <QDebug>
 #include <QFile>
 #include <QString>
@@ -32,40 +33,62 @@ MainWindow::~MainWindow()
 
 void MainWindow::on_pushButton_clicked()
 {
-    QString text = ui->param1->toPlainText();
-    //logic
-
     //config :
-    bool isFlowAlternately = true;
-    float eta = 0.001;
+    Config conf;
+    conf.HE_HEIGHT = (ui->HE_Height->text()).toFloat();
+    conf.HE_LENGTH = (ui->HE_Lenght->text()).toFloat();
+    conf.TUBE_PITCH = (ui->Tube_Pitch->text()).toFloat()/1000;
+    conf.ROW_PITCH = (ui->Row_Pitch->text()).toFloat()/1000;
+    conf.ROWS = (ui->Rows->text()).toInt();
+    conf.CONTROL_AREAS = (ui->Control_Areas->text()).toInt();
+
+    conf.OUTER_TUBE_DIAM = (ui->Tube_Outer_Diameter->text()).toFloat()/1000;
+    conf.TUBE_WALL_THICK = (ui->Tube_Wall_Thickness->text()).toFloat()/1000;
+
+    conf.FIN_PITCH = (ui->Fin_Pitch->text()).toFloat()/1000;
+    conf.FIN_THICK = (ui->Fin_Thickness->text()).toFloat()/1000;
+    conf.FIN_EFF = (ui->Fin_Efficiency->text()).toFloat();
+
+    conf.AIR_TEMP_IN = (ui->Air_Temp_In->text()).toFloat();
+    conf.AIR_FLOW[0] = ((ui->Air_Flows->text()).toFloat());
+
+    conf.WATER_TEMP_IN = (ui->Water_Temp_In->text()).toFloat();
+    conf.WATER_FLOW[0] = ((ui->Water_Flows->text()).toFloat());
+    conf.setOtherInitValues();
+    Config *config = &conf;
     //config
 
-    //check if this way to initialize model provide original list from ArrayOperation class
-    ArrayOperation ao;
-    //ThermalCalculation tc();
-
     int iteration = 0;
+    float avgError = 1;
     int simulationCount = 1; //later will be from input listAirFLow X listWaterFlow
+
+    ArrayOperation ao;
     vector<SimulationData> simDataList;
 
     for(int i=0; i<simulationCount; i++){
-        SimulationData *simulation = (ao.initalizeModel(isFlowAlternately));
-        ThermalCalculation tc(simulation);
+        SimulationData *simulation = (ao.initalizeModel(config->IS_FLOW_ALTERNATELY));
+        ThermalCalculation tc(simulation, config);
         iteration = 0;
 
         do {
             //logic to calculate next i-airtemp and i-watertemp
-            ao.setInitialValues(*simulation, isFlowAlternately); //set initial value in each iteration
-            tc.airAndWaterOutTempCalc(isFlowAlternately, iteration);
+            ao.setInitialValues(config->IS_FLOW_ALTERNATELY); //set initial value in each iteration
+            tc.airAndWaterOutTempCalc(config->IS_FLOW_ALTERNATELY, iteration);
+            avgError = ao.avgErrorCalc(iteration);
             iteration++;
         }
-        while(iteration <= 20);
+        while(avgError > config->ETA_ERR);
+        simulation->iteration = iteration;
+
         tc.airHeatPowerCalc();
         tc.waterHeatPowerCalc();
         simDataList.push_back(*simulation);
     }
 
-    ui->tempResults->setRowCount(10);
+
+
+    // prepare Table
+    ui->tempResults->setRowCount(15);
     ui->tempResults->setColumnCount(7);
 
     ui->tempResults->setSpan(0,0,1,3);
@@ -97,6 +120,15 @@ void MainWindow::on_pushButton_clicked()
     ui->tempResults->setItem(7,1, (new QTableWidgetItem(QString::number(simDataList[0].airHeatPower))));
     ui->tempResults->setItem(7,2, new QTableWidgetItem("W"));
 
+    ui->tempResults->setItem(9,0, new QTableWidgetItem("iteration"));
+    ui->tempResults->setItem(9,1, (new QTableWidgetItem(QString::number(simDataList[0].iteration))));
+    ui->tempResults->setItem(9,2, new QTableWidgetItem("-"));
+
+    ui->tempResults->setItem(10,0, new QTableWidgetItem("j_a"));
+    ui->tempResults->setItem(10,1, (new QTableWidgetItem(QString::number(simDataList[0].colburnParam))));
+    ui->tempResults->setItem(10,2, new QTableWidgetItem("-"));
+
+
 
     ui->tempResults->setSpan(0,4,1,3);
     ui->tempResults->setItem(0,4, new QTableWidgetItem("Water"));
@@ -119,6 +151,8 @@ void MainWindow::on_pushButton_clicked()
     ui->tempResults->setItem(5,5, (new QTableWidgetItem(QString::number(simDataList[0].waterHeatPower))));
     ui->tempResults->setItem(5,6, new QTableWidgetItem("W"));
 
+
+    //prepare csv to fuurther place in DB
     /*QFile file("C:/Users/Dell/Documents/Repositories/multiRowHE_cpp/multiRowHE/programFiles/testResult.txt");
     if(file.open(QIODevice::WriteOnly | QIODevice::Append | QIODevice::Text))
     {

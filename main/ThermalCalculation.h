@@ -1,14 +1,16 @@
 #pragma once
 
 #include "ControlArea.h"
+#include <Config.h>
 #include <SimulationData.h>
 
 class ThermalCalculation
 {
     SimulationData *simuData;
+    Config *config;
 
 public:
-    ThermalCalculation(SimulationData *simuData);
+    ThermalCalculation(SimulationData *simuData, Config *config);
 
     void airAndWaterOutTempCalc(bool isFlowAlternately, int iteration);
     void outTempCalc(ControlArea &area, int iteration, int row, int cArea);
@@ -39,13 +41,16 @@ public:
     float waterFricCoefCalc(float waterReynoldNum);
 
 
-    float airReynoldsNumbCalc(float airInTemp, float airOutTemp);
+    float airReynoldsNumb_doutCalc(float airInTemp, float airOutTemp);
+    float airReynoldsNumb_dhydrCalc(float airInTemp, float airOutTemp);
     float airMaxVelocityCalc();
+    float airMinDimensionCalc();
     float airPrandtlNumbCalc(float airInTemp, float airOutTemp);
     float airPrandtlNumbCalc(float airTemp);
 
     float waterReynoldsNumbCalc(float waterInTemp, float waterOutTemp);
     float waterPrandtlNumbCalc(float airInTemp, float airOutTemp);
+    float waterPrandtlNumbCalc(float waterTemp);
 
     float airThermalConductCoefCalc(float airTemp);
     float airSpecHeatCalc(float airTemp);
