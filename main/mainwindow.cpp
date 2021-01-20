@@ -120,6 +120,10 @@ void MainWindow::on_pushButton_clicked()
     ui->tempResults->setItem(7,1, (new QTableWidgetItem(QString::number(simDataList[0].airHeatPower))));
     ui->tempResults->setItem(7,2, new QTableWidgetItem("W"));
 
+    ui->tempResults->setItem(7,0, new QTableWidgetItem("Q_air"));
+    ui->tempResults->setItem(7,1, (new QTableWidgetItem(QString::number(simDataList[0].airHeatPower))));
+    ui->tempResults->setItem(7,2, new QTableWidgetItem("W"));
+
     ui->tempResults->setItem(9,0, new QTableWidgetItem("iteration"));
     ui->tempResults->setItem(9,1, (new QTableWidgetItem(QString::number(simDataList[0].iteration))));
     ui->tempResults->setItem(9,2, new QTableWidgetItem("-"));
@@ -127,6 +131,10 @@ void MainWindow::on_pushButton_clicked()
     ui->tempResults->setItem(10,0, new QTableWidgetItem("j_a"));
     ui->tempResults->setItem(10,1, (new QTableWidgetItem(QString::number(simDataList[0].colburnParam))));
     ui->tempResults->setItem(10,2, new QTableWidgetItem("-"));
+
+    ui->tempResults->setItem(11,0, new QTableWidgetItem("Nu_a"));
+    ui->tempResults->setItem(11,1, (new QTableWidgetItem(QString::number(simDataList[0].airNusseltNumb))));
+    ui->tempResults->setItem(11,2, new QTableWidgetItem("-"));
 
 
 

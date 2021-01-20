@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.13.2, 2021-01-19T11:02:32. -->
+<!-- Written by QtCreator 4.13.2, 2021-01-20T19:21:28. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -67,8 +67,14 @@
    <valuemap type="QVariantMap" key="AutoTest.CheckStates">
     <value type="Qt::CheckState" key="C:/Users/Dell/Documents/Repositories/multiRowHE_cpp/multiRowHE_app/multiRowHE/main/ThermalCalculation_test.cpp:airDensCalc_test">Checked</value>
     <value type="Qt::CheckState" key="C:/Users/Dell/Documents/Repositories/multiRowHE_cpp/multiRowHE_app/multiRowHE/main/ThermalCalculation_test.cpp:airKinViscoCoefCalc_test">Checked</value>
+    <value type="Qt::CheckState" key="C:/Users/Dell/Documents/Repositories/multiRowHE_cpp/multiRowHE_app/multiRowHE/main/ThermalCalculation_test.cpp:airPrandtlNumbCalc_test">Checked</value>
     <value type="Qt::CheckState" key="C:/Users/Dell/Documents/Repositories/multiRowHE_cpp/multiRowHE_app/multiRowHE/main/ThermalCalculation_test.cpp:airSpecHeatCalc_test">Checked</value>
     <value type="Qt::CheckState" key="C:/Users/Dell/Documents/Repositories/multiRowHE_cpp/multiRowHE_app/multiRowHE/main/ThermalCalculation_test.cpp:airThermalConductCoefCalc_test">Checked</value>
+    <value type="Qt::CheckState" key="C:/Users/Dell/Documents/Repositories/multiRowHE_cpp/multiRowHE_app/multiRowHE/main/ThermalCalculation_test.cpp:waterDensCalc_test">Checked</value>
+    <value type="Qt::CheckState" key="C:/Users/Dell/Documents/Repositories/multiRowHE_cpp/multiRowHE_app/multiRowHE/main/ThermalCalculation_test.cpp:waterKinViscoCoefCalc_test">Checked</value>
+    <value type="Qt::CheckState" key="C:/Users/Dell/Documents/Repositories/multiRowHE_cpp/multiRowHE_app/multiRowHE/main/ThermalCalculation_test.cpp:waterPrandtlNumbCalc_test">Checked</value>
+    <value type="Qt::CheckState" key="C:/Users/Dell/Documents/Repositories/multiRowHE_cpp/multiRowHE_app/multiRowHE/main/ThermalCalculation_test.cpp:waterSpecHeatCalc_test">Checked</value>
+    <value type="Qt::CheckState" key="C:/Users/Dell/Documents/Repositories/multiRowHE_cpp/multiRowHE_app/multiRowHE/main/ThermalCalculation_test.cpp:waterThermalConductCoefCalc_test">Checked</value>
     <value type="Qt::CheckState" key="C:/Users/Dell/Documents/Repositories/multiRowHE_cpp/multiRowHE_app/multiRowHE/main/ThermalCalculation_test.h:ThermalCalculation_test">Checked</value>
    </valuemap>
    <value type="int" key="AutoTest.RunAfterBuild">0</value>

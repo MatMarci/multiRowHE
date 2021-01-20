@@ -19,6 +19,7 @@ class SimulationData{
     //resultsData
 
     float colburnParam;
+    float airNusseltNumb;
 
         //air
     float airVelocityInFrontHE;

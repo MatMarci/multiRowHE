@@ -43,7 +43,9 @@ public:
 
     float airReynoldsNumb_doutCalc(float airInTemp, float airOutTemp);
     float airReynoldsNumb_dhydrCalc(float airInTemp, float airOutTemp);
-    float airMaxVelocityCalc();
+    float airReynoldsNumb_zakauskas(float airInTemp, float airOutTemp);
+
+    float airMaxVelocityCalc(float airInTemp, float airOutTemp);
     float airMinDimensionCalc();
     float airPrandtlNumbCalc(float airInTemp, float airOutTemp);
     float airPrandtlNumbCalc(float airTemp);
