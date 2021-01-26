@@ -117,12 +117,9 @@ void MainWindow::on_pushButton_clicked()
     ui->tempResults->setItem(6,2, new QTableWidgetItem("W/(m.K)"));
 
     ui->tempResults->setItem(7,0, new QTableWidgetItem("Q_air"));
-    ui->tempResults->setItem(7,1, (new QTableWidgetItem(QString::number(simDataList[0].airHeatPower))));
+    ui->tempResults->setItem(7,1, (new QTableWidgetItem(QString::number(simDataList[0].sumTotalAirHeatPower))));
     ui->tempResults->setItem(7,2, new QTableWidgetItem("W"));
 
-    ui->tempResults->setItem(7,0, new QTableWidgetItem("Q_air"));
-    ui->tempResults->setItem(7,1, (new QTableWidgetItem(QString::number(simDataList[0].airHeatPower))));
-    ui->tempResults->setItem(7,2, new QTableWidgetItem("W"));
 
     ui->tempResults->setItem(9,0, new QTableWidgetItem("iteration"));
     ui->tempResults->setItem(9,1, (new QTableWidgetItem(QString::number(simDataList[0].iteration))));

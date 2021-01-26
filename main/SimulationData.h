@@ -44,7 +44,14 @@ class SimulationData{
     float waterHTC;
 
     //output
-    float airHeatPower;
+    float sumTotalAirHeatPower;
+    vector<float> sumRowAirHeatPower;
+    map<int, vector<float>> airAreaHeatPower;
+
+    float avgAirHTC;
+    vector<float> avgAirHTCperRow;
+    map<int, vector<float>> airAreaHTC;
+
     float waterHeatPower;
     int iteration;
 
@@ -53,7 +60,6 @@ class SimulationData{
 
 
     //methods
-
 
 
 public:

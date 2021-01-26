@@ -200,28 +200,28 @@ float ThermalCalculation::airHtcCalc(float airInTemp, float airOutTemp){ //h_a o
     float reynoldsNumb_dhydr = airReynoldsNumb_dhydrCalc(airInTemp, airOutTemp);
     float prandtlNumb = (airPrandtlNumbCalc(airInTemp)+airPrandtlNumbCalc(airOutTemp))/2;
 
-    float colburnParam = 0.0014 + ((0.2618*pow(reynoldsNumb_dout,-0.4))*(pow((totHTArea/outBareTubeArea),-0.15)));
-    float a_at = (4*this->config->ROW_PITCH*this->config->TUBE_PITCH*areaMin)/(3.14*hydarulicDim*this->config->OUTER_TUBE_DIAM*(this->config->TUBE_PITCH*this->config->AREA_TUBE_LENGTH));
+    //colburn factor
+    float colburnParamMcQu = 0.0014 + ((0.2618*pow(reynoldsNumb_dout,-0.4))*(pow((totHTArea/outBareTubeArea),-0.15)));
 
-    float colburnParam2 = 0.0014 + ((0.2618*pow(reynoldsNumb_dhydr,-0.4))*(pow(a_at,-0.15)));  //check proper formula
-    this->simuData->colburnParam = colburnParam;
+    float a_at = (4*this->config->ROW_PITCH*this->config->TUBE_PITCH*areaMin)/(3.14*hydarulicDim*this->config->OUTER_TUBE_DIAM*(this->config->TUBE_PITCH*this->config->AREA_TUBE_LENGTH));
+    float colburnParamMcQu_aAt = 0.0014 + ((0.2618*pow(reynoldsNumb_dhydr,-0.4))*(pow(a_at,-0.15)));
+
+    float colburnParamGayWebb = 0.14 * (pow(reynoldsNumb_dout,-0.328))*(pow((this->config->TUBE_PITCH/this->config->ROW_PITCH),-0.502))*(pow((this->config->FIN_PITCH/this->config->OUTER_TUBE_DIAM),0.0312));
+    this->simuData->colburnParam = colburnParamMcQu;
 
     float avgAirThermalCondCoef = (airThermalConductCoefCalc(airInTemp)+airThermalConductCoefCalc(airOutTemp))/2;
-    float Re_zakuaskas = airReynoldsNumb_zakauskas(airInTemp, airOutTemp);
-    float Nu_zakuaskas = 0.24 * pow(Re_zakuaskas, 0.63);
-    float airHtc_zak = Nu_zakuaskas * avgAirThermalCondCoef / this->config->OUTER_TUBE_DIAM;
-
-    //float avgAirThermalConductCoef = (airThermalConductCoefCalc(airInTemp) + airThermalConductCoefCalc(airOutTemp))/2;
     float avgAirSpecHeat = (airSpecHeatCalc(airInTemp)+airSpecHeatCalc(airOutTemp))/2;
 
-    float airHtc = (colburnParam * avgAirSpecHeat *(airMassFlow/areaMin))/(pow(prandtlNumb,0.66667));
-    float airHtc2 = (colburnParam2 * avgAirSpecHeat *(airMassFlow/areaMin))/(pow(prandtlNumb,0.66667));
-    //float airHtc = (colburnParam * reynoldsNumb_dhydr * pow(prandtlNumb,0.3333) * avgAirThermalConductCoef) / hydarulicDim;
-    this->simuData->airBasicHTC = airHtc;
+    // air HTC
+    float airHtcMcQu = (colburnParamMcQu * avgAirSpecHeat *(airMassFlow/areaMin))/(pow(prandtlNumb,0.66667));
+    float airHtcMcQu_aAt = (colburnParamMcQu_aAt * avgAirSpecHeat *(airMassFlow/areaMin))/(pow(prandtlNumb,0.66667));
+    float airHtcGayWebb = (colburnParamGayWebb * avgAirSpecHeat *(airMassFlow/areaMin))/(pow(prandtlNumb,0.66667)); // Gay and Webb meet all requirements in whole range of air flow
+    this->simuData->airBasicHTC = airHtcGayWebb;
 
-    float airNuNumb = airHtc * this->config->OUTER_TUBE_DIAM / avgAirThermalCondCoef;
+    //air Nusselt
+    float airNuNumb = airHtcGayWebb * this->config->OUTER_TUBE_DIAM / avgAirThermalCondCoef;
     this->simuData->airNusseltNumb = airNuNumb;
-    return airHtc;
+    return airHtcGayWebb;
 }
 
 float ThermalCalculation::bareTubeBetweenFinsAreaCalc(){ //A_mf
@@ -249,23 +249,16 @@ float ThermalCalculation::finAreaCalc(){ //A_f
     return finsArea;
 }
 
-float ThermalCalculation::airReynoldsNumb_zakauskas(float airInTemp, float airOutTemp){
-    float areaMin = (this->config->FIN_PITCH-this->config->FIN_THICK)*(this->config->TUBE_PITCH-this->config->OUTER_TUBE_DIAM)*this->config->FINS_PER_AREA;
-    float airMassFlow = airMassFlowCalc(airInTemp, airOutTemp);
-    float airMaxVelocity = airMaxVelocityCalc(airInTemp, airOutTemp);
-    float avgAirKinViscoCoef = (airKinViscoCoefCalc(airInTemp) + airKinViscoCoefCalc(airOutTemp))/2;
-
-    float reynoldsNumb = (airMaxVelocity * this->config->OUTER_TUBE_DIAM) / avgAirKinViscoCoef;
-    return reynoldsNumb;
-}
-
 float ThermalCalculation::airReynoldsNumb_doutCalc(float airInTemp, float airOutTemp){
     float areaMin = (this->config->FIN_PITCH-this->config->FIN_THICK)*(this->config->TUBE_PITCH-this->config->OUTER_TUBE_DIAM)*this->config->FINS_PER_AREA;
     float airMassFlow = airMassFlowCalc(airInTemp, airOutTemp);
-    float airMaxVelocity = airMaxVelocityCalc(airInTemp, airOutTemp);
-    float avgAirKinViscoCoef = (airKinViscoCoefCalc(airInTemp) + airKinViscoCoefCalc(airOutTemp))/2;
+    //float airMaxVelocity = airMaxVelocityCalc(airInTemp, airOutTemp);
 
-    float reynoldsNumb = ((airMassFlow/areaMin) * this->config->OUTER_TUBE_DIAM) / avgAirKinViscoCoef;
+    float avgAirDensity = (airDensCalc(airInTemp)+airDensCalc(airOutTemp))/2;
+    float avgAirKinViscoCoef = (airKinViscoCoefCalc(airInTemp) + airKinViscoCoefCalc(airOutTemp))/2;
+    float avgAirDynViscoCoef = avgAirKinViscoCoef * avgAirDensity;
+
+    float reynoldsNumb = ((airMassFlow/areaMin) * this->config->OUTER_TUBE_DIAM) / avgAirDynViscoCoef;
     this->simuData->airReynoldsNumb = reynoldsNumb;
     return reynoldsNumb;
 }
@@ -326,23 +319,39 @@ float ThermalCalculation::waterReynoldsNumbCalc(float waterInTemp, float waterOu
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 void ThermalCalculation::airHeatPowerCalc(){
-    float sumAirHeatPower = 0;
-    float airHeatPower;
-    float airTempIn = this->simuData->areas[0][0].m_tempsAirIn[0];
+    float sumTotAirHeatPower = 0;
+    float sumRowAirHeatPower = 0;
+    float airAreaHeatPower;
+    float airTempIn;
     float airMassFlow;
     float avgAirSpecHeat;
     float airTempOut;
 
-    for(int i=0; i<this->config->CONTROL_AREAS; i++){
-        airTempOut = this->simuData->areas[this->config->ROWS-1][i].m_tempsAirOut.back();
-        airMassFlow = airMassFlowCalc(airTempIn, airTempOut);
-        avgAirSpecHeat = (airSpecHeatCalc(airTempIn)+airSpecHeatCalc(airTempOut))/2;
+    for(auto row = 0; row < (int)(this->simuData->areas.size()); row++){
+        sumRowAirHeatPower = 0;
+        for(auto area = 0; area < (int)(this->simuData->areas[row].size()); area++){
+            airAreaHeatPower = 0;
+            airTempIn = this->simuData->areas[row][area].m_tempsAirIn.back();
+            airTempOut = this->simuData->areas[row][area].m_tempsAirOut.back();
+            airMassFlow = airMassFlowCalc(airTempIn, airTempOut);
+            avgAirSpecHeat = (airSpecHeatCalc(airTempIn)+airSpecHeatCalc(airTempOut))/2;
 
-        airHeatPower = airMassFlow * avgAirSpecHeat * (airTempOut - airTempIn);
-        sumAirHeatPower += airHeatPower;
+            airAreaHeatPower = airMassFlow * avgAirSpecHeat * (airTempOut - airTempIn);
+
+            if(this->simuData->airAreaHeatPower.find(row) == this->simuData->airAreaHeatPower.end()){
+                vector<float> rowAreasHeatPower;
+                rowAreasHeatPower.push_back(airAreaHeatPower);
+                (this->simuData->airAreaHeatPower)[row] = rowAreasHeatPower;
+            } else {
+                (this->simuData->airAreaHeatPower[row]).push_back(airAreaHeatPower);
+            }
+
+            sumRowAirHeatPower += airAreaHeatPower;
+        }
+        this->simuData->sumRowAirHeatPower.push_back(sumRowAirHeatPower);
+        sumTotAirHeatPower += sumRowAirHeatPower;
     }
-
-    this->simuData->airHeatPower = sumAirHeatPower * this->config->TUBES_IN_ROW;
+    this->simuData->sumTotalAirHeatPower = sumTotAirHeatPower * this->config->TUBES_IN_ROW;
 }
 
 void ThermalCalculation::waterHeatPowerCalc(){
