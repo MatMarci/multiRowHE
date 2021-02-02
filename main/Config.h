@@ -15,7 +15,7 @@ public:
     float TUBE_PITCH = 0.025;
     float ROW_PITCH = 0.02156;
 
-    int TUBES_IN_ROW = 13;
+    int TUBES_IN_ROW = 0;
 
     float AREA_TUBE_LENGTH;
     float FINS_PER_AREA;

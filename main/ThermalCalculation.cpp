@@ -1,9 +1,6 @@
-#include "ThermalCalculation.h"
+#include <ThermalCalculation.h>
 
 #include <math.h>
-
-//params - later complete in Config file and collect from GUI
-
 
 ThermalCalculation::ThermalCalculation(SimulationData *simuData, Config *config)
 {
@@ -13,6 +10,8 @@ ThermalCalculation::ThermalCalculation(SimulationData *simuData, Config *config)
 
 void ThermalCalculation::airAndWaterOutTempCalc(bool isFlowAlternately, int iteration)
 {
+    this->simuData->airFlow = this->config->AIR_FLOW[0];
+    this->simuData->waterFlowBeforeHE = this->config->WATER_FLOW[0];
     this->simuData->airVelocityInFrontHE = this->config->AIR_VELOCITY_BEFORE_HE;
 
     for(auto row=0; row < (int)(this->simuData->areas.size()); row++){
@@ -190,6 +189,8 @@ float ThermalCalculation::waterFricCoefCalc(float waterReynoldNum){
 float ThermalCalculation::airHtcCalc(float airInTemp, float airOutTemp){ //h_a or //alfa_a
     //(A/A_t) - the ratio of the total surface area to the area of the bone tube
     float totHTArea = bareTubeBetweenFinsAreaCalc() + finAreaCalc(); // A - total heat transfer area
+    this->simuData->totHeatTransferArea = totHTArea * this->config->CONTROL_AREAS * this->config->TUBES_IN_ROW * this->config->ROWS;
+
     float outBareTubeArea = outBareTubeAreaCalc(); // A_t - the area of the bare tubes without fins. A/At becomes 1.0 for a bare tube bank.
     //float hydarulicDim = airHydraulicDimCalc(); //equivalent diameter;
     float areaMin = (this->config->FIN_PITCH-this->config->FIN_THICK)*(this->config->TUBE_PITCH-this->config->OUTER_TUBE_DIAM)*this->config->FINS_PER_AREA;
@@ -246,6 +247,7 @@ float ThermalCalculation::finAreaCalc(){ //A_f
 
     float finsArea = 2 * (2.0*A_oab + 4.0*A_obc) * this->config->FINS_PER_AREA;
     this->simuData->airFinsArea = finsArea;
+    this->simuData->pipesInRow = this->config->TUBES_IN_ROW;
     return finsArea;
 }
 
@@ -348,7 +350,7 @@ void ThermalCalculation::airHeatPowerCalc(){
 
             sumRowAirHeatPower += airAreaHeatPower;
         }
-        this->simuData->sumRowAirHeatPower.push_back(sumRowAirHeatPower);
+        this->simuData->sumRowAirHeatPower.push_back(sumRowAirHeatPower * this->config->TUBES_IN_ROW);
         sumTotAirHeatPower += sumRowAirHeatPower;
     }
     this->simuData->sumTotalAirHeatPower = sumTotAirHeatPower * this->config->TUBES_IN_ROW;

@@ -1,7 +1,8 @@
 #pragma once
 
-#include "ArrayOperation.h"
-#include "iostream"
+#include <ArrayOperation.h>
+
+#include <iostream>
 #include <vector>
 
 using namespace std;
@@ -33,6 +34,7 @@ public:
     friend class ControlAreaBuilder;
     friend class ArrayOperation;
     friend class ThermalCalculation;
+    friend class ResultsProcessing;
     friend class FileParser;
     friend class MainWindow;
 

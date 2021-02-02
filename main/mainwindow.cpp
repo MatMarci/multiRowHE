@@ -14,6 +14,11 @@
 #include <QTableWidget.h>
 #include <SimulationData.h>
 #include <ostream>
+#include <QScrollBar>
+#include <QAbstractScrollArea>
+#include <QScrollArea>
+#include <QButtonGroup>
+#include <ResultsProcessing.h>
 
 
 using namespace std;
@@ -68,6 +73,7 @@ void MainWindow::on_pushButton_clicked()
     for(int i=0; i<simulationCount; i++){
         SimulationData *simulation = (ao.initalizeModel(config->IS_FLOW_ALTERNATELY));
         ThermalCalculation tc(simulation, config);
+        ResultsProcessing rp(simulation, config);
         iteration = 0;
 
         do {
@@ -82,80 +88,198 @@ void MainWindow::on_pushButton_clicked()
 
         tc.airHeatPowerCalc();
         tc.waterHeatPowerCalc();
+        rp.airNusseltPerRowCalc();
+
         simDataList.push_back(*simulation);
     }
 
 
+    // prepare general results Table
+    for(int i=0; i<1; i++){
 
-    // prepare Table
-    ui->tempResults->setRowCount(15);
-    ui->tempResults->setColumnCount(7);
+        //create main elements
+        QLabel *generalTitle = new QLabel(this);
+        generalTitle->setFrameStyle(QFrame::StyledPanel | QFrame::Raised);
+        generalTitle->setText("Simulation: " + QString::number(i+1) + "\n V_{air}: " + QString::number(simDataList[i].airFlow) + " m^3/h \n m_{water}: " + QString::number(simDataList[i].waterFlowBeforeHE) + " kg/s");
+        generalTitle->setAlignment(Qt::AlignTop | Qt::AlignLeft);
 
-    ui->tempResults->setSpan(0,0,1,3);
-    ui->tempResults->setItem(0,0, new QTableWidgetItem("Air"));
+        QTableWidget *generalResults = new QTableWidget();
+        generalResults->verticalScrollBar()->setDisabled(true);
+        generalResults->setMinimumHeight(600);
+        generalResults->setRowCount(15);
+        generalResults->setColumnCount(7);
 
-    ui->tempResults->setItem(1,0, new QTableWidgetItem("v_before_HE"));
-    ui->tempResults->setItem(1,1, (new QTableWidgetItem(QString::number(simDataList[0].airVelocityInFrontHE))));
-    ui->tempResults->setItem(1,2, new QTableWidgetItem("m/s"));
+        QLabel *tempTitle = new QLabel(this);
+        tempTitle->setFrameStyle(QFrame::StyledPanel | QFrame::Raised);
+        tempTitle->setText("Temperatures results:");
+        tempTitle->setAlignment(Qt::AlignTop | Qt::AlignLeft);
 
-    ui->tempResults->setItem(2,0, new QTableWidgetItem("v_max"));
-    ui->tempResults->setItem(2,1, (new QTableWidgetItem(QString::number(simDataList[0].airMaxVelocity))));
-    ui->tempResults->setItem(2,2, new QTableWidgetItem("m/s"));
+        QTableWidget *tempResults = new QTableWidget();
+        int tempTableRows = config->ROWS *2 + 1;
+        int tempTableCol = config->CONTROL_AREAS + 4;
+        tempResults->verticalScrollBar()->setDisabled(true);
+        tempResults->setRowCount(tempTableRows);
+        tempResults->setColumnCount(tempTableCol);
+        tempResults->setMinimumHeight(tempTableRows * 43); //43j per row
 
-    ui->tempResults->setItem(3,0, new QTableWidgetItem("Re"));
-    ui->tempResults->setItem(3,1, (new QTableWidgetItem(QString::number(simDataList[0].airReynoldsNumb))));
+        QSplitter *tabsSplitter = new QSplitter();
+        tabsSplitter->setOrientation(Qt::Vertical);
+        tabsSplitter->addWidget(generalTitle);
+        tabsSplitter->addWidget(generalResults);
+        tabsSplitter->addWidget(tempTitle);
+        tabsSplitter->addWidget(tempResults);
 
-    ui->tempResults->setItem(4,0, new QTableWidgetItem("Pr"));
-    ui->tempResults->setItem(4,1, (new QTableWidgetItem(QString::number(simDataList[0].airPrandtlNumb))));
-
-    ui->tempResults->setItem(5,0, new QTableWidgetItem("alfa_0"));
-    ui->tempResults->setItem(5,1, (new QTableWidgetItem(QString::number(simDataList[0].airBasicHTC))));
-    ui->tempResults->setItem(5,2, new QTableWidgetItem("W/(m.K)"));
-
-    ui->tempResults->setItem(6,0, new QTableWidgetItem("alfa_zr"));
-    ui->tempResults->setItem(6,1, (new QTableWidgetItem(QString::number(simDataList[0].airReducedHTC))));
-    ui->tempResults->setItem(6,2, new QTableWidgetItem("W/(m.K)"));
-
-    ui->tempResults->setItem(7,0, new QTableWidgetItem("Q_air"));
-    ui->tempResults->setItem(7,1, (new QTableWidgetItem(QString::number(simDataList[0].sumTotalAirHeatPower))));
-    ui->tempResults->setItem(7,2, new QTableWidgetItem("W"));
-
-
-    ui->tempResults->setItem(9,0, new QTableWidgetItem("iteration"));
-    ui->tempResults->setItem(9,1, (new QTableWidgetItem(QString::number(simDataList[0].iteration))));
-    ui->tempResults->setItem(9,2, new QTableWidgetItem("-"));
-
-    ui->tempResults->setItem(10,0, new QTableWidgetItem("j_a"));
-    ui->tempResults->setItem(10,1, (new QTableWidgetItem(QString::number(simDataList[0].colburnParam))));
-    ui->tempResults->setItem(10,2, new QTableWidgetItem("-"));
-
-    ui->tempResults->setItem(11,0, new QTableWidgetItem("Nu_a"));
-    ui->tempResults->setItem(11,1, (new QTableWidgetItem(QString::number(simDataList[0].airNusseltNumb))));
-    ui->tempResults->setItem(11,2, new QTableWidgetItem("-"));
+        ui->resultsAreaScroll->setWidget(tabsSplitter);
 
 
+        //prepare general table
+        generalResults->setSpan(0,0,1,3);
+        generalResults->setItem(0,0, new QTableWidgetItem("Air"));
 
-    ui->tempResults->setSpan(0,4,1,3);
-    ui->tempResults->setItem(0,4, new QTableWidgetItem("Water"));
+        generalResults->setItem(1,0, new QTableWidgetItem("v_before_HE"));
+        generalResults->setItem(1,1, (new QTableWidgetItem(QString::number(simDataList[0].airVelocityInFrontHE))));
+        generalResults->setItem(1,2, new QTableWidgetItem("m/s"));
 
-    ui->tempResults->setItem(1,4, new QTableWidgetItem("v"));
-    ui->tempResults->setItem(1,5, (new QTableWidgetItem(QString::number(simDataList[0].waterVelocity))));
-    ui->tempResults->setItem(1,6, new QTableWidgetItem("m/s"));
+        generalResults->setItem(2,0, new QTableWidgetItem("v_max"));
+        generalResults->setItem(2,1, (new QTableWidgetItem(QString::number(simDataList[0].airMaxVelocity))));
+        generalResults->setItem(2,2, new QTableWidgetItem("m/s"));
 
-    ui->tempResults->setItem(2,4, new QTableWidgetItem("Re"));
-    ui->tempResults->setItem(2,5, (new QTableWidgetItem(QString::number(simDataList[0].waterReynoldsNumb))));
+        generalResults->setItem(3,0, new QTableWidgetItem("Re"));
+        generalResults->setItem(3,1, (new QTableWidgetItem(QString::number(simDataList[0].airReynoldsNumb))));
 
-    ui->tempResults->setItem(3,4, new QTableWidgetItem("Pr"));
-    ui->tempResults->setItem(3,5, (new QTableWidgetItem(QString::number(simDataList[0].waterPrandtlNumb))));
+        generalResults->setItem(4,0, new QTableWidgetItem("Pr"));
+        generalResults->setItem(4,1, (new QTableWidgetItem(QString::number(simDataList[0].airPrandtlNumb))));
 
-    ui->tempResults->setItem(4,4, new QTableWidgetItem("alfa"));
-    ui->tempResults->setItem(4,5, (new QTableWidgetItem(QString::number(simDataList[0].waterHTC))));
-    ui->tempResults->setItem(4,6, new QTableWidgetItem("W/(m.K)"));
+        generalResults->setItem(5,0, new QTableWidgetItem("alfa_0"));
+        generalResults->setItem(5,1, (new QTableWidgetItem(QString::number(simDataList[0].airBasicHTC))));
+        generalResults->setItem(5,2, new QTableWidgetItem("W/(m.K)"));
 
-    ui->tempResults->setItem(5,4, new QTableWidgetItem("Q_water"));
-    ui->tempResults->setItem(5,5, (new QTableWidgetItem(QString::number(simDataList[0].waterHeatPower))));
-    ui->tempResults->setItem(5,6, new QTableWidgetItem("W"));
+        generalResults->setItem(6,0, new QTableWidgetItem("alfa_zr"));
+        generalResults->setItem(6,1, (new QTableWidgetItem(QString::number(simDataList[0].airReducedHTC))));
+        generalResults->setItem(6,2, new QTableWidgetItem("W/(m.K)"));
 
+        generalResults->setItem(7,0, new QTableWidgetItem("Q_air"));
+        generalResults->setItem(7,1, (new QTableWidgetItem(QString::number(simDataList[0].sumTotalAirHeatPower))));
+        generalResults->setItem(7,2, new QTableWidgetItem("W"));
+
+
+        generalResults->setItem(9,0, new QTableWidgetItem("iteration"));
+        generalResults->setItem(9,1, (new QTableWidgetItem(QString::number(simDataList[0].iteration))));
+        generalResults->setItem(9,2, new QTableWidgetItem("-"));
+
+        generalResults->setItem(10,0, new QTableWidgetItem("alfa_1"));
+        generalResults->setItem(10,1, (new QTableWidgetItem(QString::number(simDataList[0].avgAirHTCperRow[0]))));
+        generalResults->setItem(10,2, new QTableWidgetItem("W/(m^2.K)"));
+
+        generalResults->setItem(11,0, new QTableWidgetItem("alfa_2"));
+        generalResults->setItem(11,1, (new QTableWidgetItem(QString::number(simDataList[0].avgAirHTCperRow[1]))));
+        generalResults->setItem(11,2, new QTableWidgetItem("W/(m^2.K)"));
+
+        generalResults->setItem(12,0, new QTableWidgetItem("alfa_3"));
+        generalResults->setItem(12,1, (new QTableWidgetItem(QString::number(simDataList[0].avgAirHTCperRow[2]))));
+        generalResults->setItem(12,2, new QTableWidgetItem("W/(m^2.K)"));
+
+        generalResults->setItem(13,0, new QTableWidgetItem("alfa_4"));
+        generalResults->setItem(13,1, (new QTableWidgetItem(QString::number(simDataList[0].avgAirHTCperRow[3]))));
+        generalResults->setItem(13,2, new QTableWidgetItem("W/(m^2.K)"));
+
+
+
+        generalResults->setSpan(0,4,1,3);
+        generalResults->setItem(0,4, new QTableWidgetItem("Water"));
+
+        generalResults->setItem(1,4, new QTableWidgetItem("v"));
+        generalResults->setItem(1,5, (new QTableWidgetItem(QString::number(simDataList[0].waterVelocity))));
+        generalResults->setItem(1,6, new QTableWidgetItem("m/s"));
+
+        generalResults->setItem(2,4, new QTableWidgetItem("Re"));
+        generalResults->setItem(2,5, (new QTableWidgetItem(QString::number(simDataList[0].waterReynoldsNumb))));
+
+        generalResults->setItem(3,4, new QTableWidgetItem("Pr"));
+        generalResults->setItem(3,5, (new QTableWidgetItem(QString::number(simDataList[0].waterPrandtlNumb))));
+
+        generalResults->setItem(4,4, new QTableWidgetItem("alfa"));
+        generalResults->setItem(4,5, (new QTableWidgetItem(QString::number(simDataList[0].waterHTC))));
+        generalResults->setItem(4,6, new QTableWidgetItem("W/(m.K)"));
+
+        generalResults->setItem(5,4, new QTableWidgetItem("Q_water"));
+        generalResults->setItem(5,5, (new QTableWidgetItem(QString::number(simDataList[0].waterHeatPower))));
+        generalResults->setItem(5,6, new QTableWidgetItem("W"));
+
+
+        //prepare Temp Table
+        int colOffset = 1;
+        int rowHE = 0;
+        int areaHE = 0;
+
+        for(auto col=0; col < conf.ROWS+1; col++){
+            areaHE = 0;
+
+            for(auto row=0; row < tempTableRows; row++){
+
+                //prepare table headers
+                if(col >= 1 && row < 3){
+                    if(row == 0){
+                        tempResults->setSpan(row,colOffset,1,2);
+                        tempResults->setItem(row, colOffset, (new QTableWidgetItem("Row: " + QString::number(rowHE+1))));
+                        tempResults->item(row, colOffset)->setTextAlignment(Qt::AlignCenter);
+                        tempResults->setItem(row+1, colOffset, (new QTableWidgetItem("T_water [C]")));
+                        tempResults->item(row+1, colOffset)->setTextAlignment(Qt::AlignCenter);
+                        tempResults->setItem(row+1, colOffset+1, (new QTableWidgetItem("T_air [C]")));
+                        tempResults->item(row+1, colOffset+1)->setTextAlignment(Qt::AlignCenter);
+                    }
+                }
+
+                //prepare 1st column header
+                if(col == 0 && row == 1){
+                    tempResults->setItem(row, col, (new QTableWidgetItem("T_air_in")));
+                }
+
+                //prepare 1st column
+                if(col == 0 && (row >= 3 && row < conf.CONTROL_AREAS+3)){
+                    tempResults->setItem(row, col, (new QTableWidgetItem(QString::number(conf.AIR_TEMP_IN))));
+                    tempResults->item(row, col)->setBackground(QColor(255,230,230));
+                    tempResults->item(row, col)->setTextAlignment(Qt::AlignCenter);
+                }
+
+                //prepare temp data
+                if((col >= 1 && col < conf.ROWS+1) && (row >= 3 && row < conf.CONTROL_AREAS+3)){
+                   if(rowHE == 0 || rowHE % 2 == 0 || !conf.IS_FLOW_ALTERNATELY){
+                       if(row == 3){
+                            tempResults->setItem(row-1, colOffset, (new QTableWidgetItem(QString::number(conf.WATER_TEMP_IN))));
+                            tempResults->item(row-1, colOffset)->setBackground(QColor(255,130,0));
+                            tempResults->item(row-1, colOffset)->setTextAlignment(Qt::AlignCenter);
+                       }
+                       tempResults->setItem(row, colOffset, (new QTableWidgetItem(QString::number(simDataList[i].areas[rowHE][areaHE].m_tempsWaterOut.back() * 1000 / 1000.0, 'g', 3))));
+                       tempResults->item(row, colOffset)->setBackground(QColor(255,120+areaHE*25,0+areaHE*50));
+                       tempResults->item(row, colOffset)->setTextAlignment(Qt::AlignCenter);
+                   } else if((rowHE == 1 || rowHE % 2 != 0) && conf.IS_FLOW_ALTERNATELY){
+                       if(row == 3){
+                            tempResults->setItem(row + conf.CONTROL_AREAS, colOffset, (new QTableWidgetItem(QString::number(conf.WATER_TEMP_IN))));
+                            tempResults->item(row + conf.CONTROL_AREAS, colOffset)->setBackground(QColor(255,130,0));
+                            tempResults->item(row + conf.CONTROL_AREAS, colOffset)->setTextAlignment(Qt::AlignCenter);
+                       }
+                       tempResults->setItem(tempTableRows - row + 1, colOffset, (new QTableWidgetItem(QString::number(simDataList[i].areas[rowHE][areaHE].m_tempsWaterOut.back() * 1000 / 1000.0, 'g', 3))));
+                       tempResults->item(tempTableRows - row + 1, colOffset)->setBackground(QColor(255,120+areaHE*25,0+areaHE*50));
+                       tempResults->item(tempTableRows - row + 1, colOffset)->setTextAlignment(Qt::AlignCenter);
+                   }
+                   tempResults->setItem(row, colOffset+1, (new QTableWidgetItem(QString::number(simDataList[i].areas[rowHE][areaHE].m_tempsAirOut.back() * 1000 / 1000.0, 'g', 3))));
+                   tempResults->item(row, colOffset+1)->setBackground(QColor(255,200-rowHE*20,200-rowHE*20));
+                   tempResults->item(row, colOffset+1)->setTextAlignment(Qt::AlignCenter);
+
+                   areaHE++;
+               }
+            }
+
+            if(col >= 1 && col < conf.ROWS+1){
+                colOffset += 2;
+                rowHE++;
+            }
+
+        }
+
+
+    }
 
     //prepare csv to fuurther place in DB
     /*QFile file("C:/Users/Dell/Documents/Repositories/multiRowHE_cpp/multiRowHE/programFiles/testResult.txt");

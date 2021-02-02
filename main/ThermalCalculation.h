@@ -1,6 +1,6 @@
 #pragma once
 
-#include "ControlArea.h"
+#include <ControlArea.h>
 #include <Config.h>
 #include <SimulationData.h>
 

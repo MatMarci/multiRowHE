@@ -17,6 +17,7 @@ SOURCES += \
     ControlArea.cpp \
     ControlAreaBuilder.cpp \
     FileParser.cpp \
+    ResultsProcessing.cpp \
     SimulationData.cpp \
     ThermalCalculation.cpp \
     ThermalCalculation_test.cpp \
@@ -30,6 +31,7 @@ HEADERS += \
     ControlArea.h \
     ControlAreaBuilder.h \
     FileParser.h \
+    ResultsProcessing.h \
     SimulationData.h \
     ThermalCalculation.h \
     ThermalCalculation_test.h \

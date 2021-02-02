@@ -11,6 +11,10 @@ class ControlArea;
 
 class SimulationData{
 
+    //HE params
+    int pipesInRow;
+    float totHeatTransferArea;
+
     //inputData
     float airFlow;
     float waterFlowBeforeHE;
@@ -66,6 +70,5 @@ public:
     friend class ArrayOperation;
     friend class ThermalCalculation;
     friend class MainWindow;
-
-
+    friend class ResultsProcessing;
 };
