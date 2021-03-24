@@ -13,7 +13,10 @@ public:
     ResultsProcessing(SimulationData *simuData, Config *config);
 
     void airNusseltPerRowCalc();
+    void avgMediumsTempCalc();
+
     float airUCoefBackwardCalc(int row);
-    float alfaReductBackwardCalc(float airUCoefBackward);
-    float alfa0BackwardCalc(float alfaReductBackward);
+    float alfaReductBackwardCalc(int row, float airUCoefBackward);
+    float alfa0BackwardCalc(int row, float alfaReductBackward);
+    float airNusseltNumbCalc(int row, float alfa0Backward);
 };

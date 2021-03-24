@@ -88,6 +88,10 @@ public:
     QGridLayout *gridLayout_7;
     QScrollArea *resultsAreaScroll;
     QWidget *scrollAreaContent;
+    QWidget *chart;
+    QGridLayout *gridLayout_2;
+    QScrollArea *chartArea;
+    QWidget *scrollAreaContent_2;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -105,6 +109,7 @@ public:
         tabWidget->setObjectName(QString::fromUtf8("tabWidget"));
         tabWidget->setGeometry(QRect(10, 40, 1201, 521));
         tabWidget->setTabShape(QTabWidget::Triangular);
+        tabWidget->setElideMode(Qt::ElideMiddle);
         tabWidget->setUsesScrollButtons(true);
         tabWidget->setMovable(false);
         tabWidget->setTabBarAutoHide(false);
@@ -361,6 +366,21 @@ public:
         gridLayout_7->addWidget(resultsAreaScroll, 0, 0, 1, 1);
 
         tabWidget->addTab(general_results, QString());
+        chart = new QWidget();
+        chart->setObjectName(QString::fromUtf8("chart"));
+        gridLayout_2 = new QGridLayout(chart);
+        gridLayout_2->setObjectName(QString::fromUtf8("gridLayout_2"));
+        chartArea = new QScrollArea(chart);
+        chartArea->setObjectName(QString::fromUtf8("chartArea"));
+        chartArea->setWidgetResizable(true);
+        scrollAreaContent_2 = new QWidget();
+        scrollAreaContent_2->setObjectName(QString::fromUtf8("scrollAreaContent_2"));
+        scrollAreaContent_2->setGeometry(QRect(0, 0, 1173, 464));
+        chartArea->setWidget(scrollAreaContent_2);
+
+        gridLayout_2->addWidget(chartArea, 0, 0, 1, 1);
+
+        tabWidget->addTab(chart, QString());
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName(QString::fromUtf8("menubar"));
@@ -398,9 +418,9 @@ public:
         label_2->setText(QCoreApplication::translate("MainWindow", "Height [m]", nullptr));
         HE_Height->setText(QCoreApplication::translate("MainWindow", "0.4", nullptr));
         label_3->setText(QCoreApplication::translate("MainWindow", "Tube Pitch [mm]", nullptr));
-        Tube_Pitch->setText(QCoreApplication::translate("MainWindow", "25", nullptr));
+        Tube_Pitch->setText(QCoreApplication::translate("MainWindow", "32", nullptr));
         label_4->setText(QCoreApplication::translate("MainWindow", "Row Pitch [mm]", nullptr));
-        Row_Pitch->setText(QCoreApplication::translate("MainWindow", "21.56", nullptr));
+        Row_Pitch->setText(QCoreApplication::translate("MainWindow", "27.71", nullptr));
         label_5->setText(QCoreApplication::translate("MainWindow", "Rows [-]", nullptr));
         Rows->setText(QCoreApplication::translate("MainWindow", "4", nullptr));
         label_13->setText(QCoreApplication::translate("MainWindow", "Control Areas [-]", nullptr));
@@ -409,19 +429,20 @@ public:
         label_12->setText(QCoreApplication::translate("MainWindow", "Material", nullptr));
         comboBox->setCurrentText(QString());
         label_14->setText(QCoreApplication::translate("MainWindow", "Outer Diameter [mm]", nullptr));
-        Tube_Outer_Diameter->setText(QCoreApplication::translate("MainWindow", "8", nullptr));
+        Tube_Outer_Diameter->setText(QCoreApplication::translate("MainWindow", "12", nullptr));
         label_18->setText(QCoreApplication::translate("MainWindow", "Wall Thickness [mm]", nullptr));
-        Tube_Wall_Thickness->setText(QCoreApplication::translate("MainWindow", "0.28", nullptr));
+        Tube_Wall_Thickness->setText(QCoreApplication::translate("MainWindow", "0.35", nullptr));
         label_34->setText(QCoreApplication::translate("MainWindow", "Fins parameters:", nullptr));
         label_36->setText(QCoreApplication::translate("MainWindow", "Material", nullptr));
         label_37->setText(QCoreApplication::translate("MainWindow", "Fin Pitch [mm]", nullptr));
         Fin_Pitch->setText(QCoreApplication::translate("MainWindow", "3", nullptr));
         label_35->setText(QCoreApplication::translate("MainWindow", "Fin Thickness [mm]", nullptr));
-        Fin_Thickness->setText(QCoreApplication::translate("MainWindow", "0.12", nullptr));
+        Fin_Thickness->setText(QCoreApplication::translate("MainWindow", "0.14", nullptr));
         label_39->setText(QCoreApplication::translate("MainWindow", "Fin Efficiency [-]", nullptr));
         Fin_Efficiency->setText(QCoreApplication::translate("MainWindow", "0.8765", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(params), QCoreApplication::translate("MainWindow", "Parameters", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(general_results), QCoreApplication::translate("MainWindow", "General Results", nullptr));
+        tabWidget->setTabText(tabWidget->indexOf(chart), QCoreApplication::translate("MainWindow", "Page", nullptr));
     } // retranslateUi
 
 };

@@ -4,6 +4,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11
 QT += testlib
+QT += charts
 CONFIG += testcase
 
 # You can make your code fail to compile if it uses deprecated APIs.
@@ -13,6 +14,7 @@ CONFIG += testcase
 SOURCES += \
     ArrayOperation.cpp \
     CalculateButtonLogic.cpp \
+    Chart.cpp \
     Config.cpp \
     ControlArea.cpp \
     ControlAreaBuilder.cpp \
@@ -27,6 +29,7 @@ SOURCES += \
 HEADERS += \
     ArrayOperation.h \
     CalculateButtonLogic.h \
+    Chart.h \
     Config.h \
     ControlArea.h \
     ControlAreaBuilder.h \

@@ -15,6 +15,7 @@ void ThermalCalculation::airAndWaterOutTempCalc(bool isFlowAlternately, int iter
     this->simuData->airVelocityInFrontHE = this->config->AIR_VELOCITY_BEFORE_HE;
 
     for(auto row=0; row < (int)(this->simuData->areas.size()); row++){
+       this->config->CURRENT_ROWS = row;
        for(auto area=0; area < (int)(this->simuData->areas[row].size()); area++){
            outTempCalc((this->simuData->areas[row])[area], iteration, row, area);
        }
@@ -129,12 +130,12 @@ float ThermalCalculation::airMassFlowCalc(float airInTemp, float airOutTemp){ //
 
 float ThermalCalculation::reductAirHtcCalc(float airInTemp, float airOutTemp){ //h_o or alfa_o
     float airHtc = airHtcCalc(airInTemp, airOutTemp);
-    float bareTipeBetweenFinsArea = bareTubeBetweenFinsAreaCalc();   // A_mf
+    float bareTubeBetweenFinsArea = bareTubeBetweenFinsAreaCalc();   // A_mf
     float finsArea = finAreaCalc(); //A_f
     float outBareTubeArea = outBareTubeAreaCalc();  //A_o
 
-    float reductAirHtc = airHtc * ((bareTipeBetweenFinsArea/outBareTubeArea)+(this->config->FIN_EFF*finsArea/outBareTubeArea));
-    this->simuData->airReducedHTC = reductAirHtc;
+    float reductAirHtc = airHtc * ((bareTubeBetweenFinsArea/outBareTubeArea)+(this->config->FIN_EFF*finsArea/outBareTubeArea));
+    this->simuData->airReducedHTC[this->config->CURRENT_ROWS].push_back(reductAirHtc);
     return reductAirHtc;
 }
 
@@ -162,7 +163,7 @@ float ThermalCalculation::waterHtcCalc(float waterInTemp, float waterOutTemp){ /
 
     float avgWaterThermalConductCoef = (waterThermalConductCoefCalc(waterInTemp) + waterThermalConductCoefCalc(waterOutTemp))/2;
     float waterHtc = waterNusseltNum * avgWaterThermalConductCoef / this->config->INNER_TUBE_DIAM;
-    this->simuData->waterHTC = waterHtc;
+    this->simuData->waterHTC[this->config->CURRENT_ROWS].push_back(waterHtc);
     return waterHtc;
 }
 
@@ -217,7 +218,7 @@ float ThermalCalculation::airHtcCalc(float airInTemp, float airOutTemp){ //h_a o
     float airHtcMcQu = (colburnParamMcQu * avgAirSpecHeat *(airMassFlow/areaMin))/(pow(prandtlNumb,0.66667));
     float airHtcMcQu_aAt = (colburnParamMcQu_aAt * avgAirSpecHeat *(airMassFlow/areaMin))/(pow(prandtlNumb,0.66667));
     float airHtcGayWebb = (colburnParamGayWebb * avgAirSpecHeat *(airMassFlow/areaMin))/(pow(prandtlNumb,0.66667)); // Gay and Webb meet all requirements in whole range of air flow
-    this->simuData->airBasicHTC = airHtcGayWebb;
+    this->simuData->airBasicHTC[this->config->CURRENT_ROWS].push_back(airHtcGayWebb);
 
     //air Nusselt
     float airNuNumb = airHtcGayWebb * this->config->OUTER_TUBE_DIAM / avgAirThermalCondCoef;

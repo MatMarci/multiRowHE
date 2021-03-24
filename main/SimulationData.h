@@ -21,9 +21,10 @@ class SimulationData{
     float waterFlowInOnePipe;
 
     //resultsData
-
     float colburnParam;
     float airNusseltNumb;
+    vector<float> avgAirTempOut;
+    vector<float> avgWaterTempOut;
 
         //air
     float airVelocityInFrontHE;
@@ -37,24 +38,23 @@ class SimulationData{
 
     float airReynoldsNumb;
     float airPrandtlNumb;
-    float airBasicHTC;
-    float airReducedHTC;
+    map<int, vector<float>> airBasicHTC;
+    map<int, vector<float>> airReducedHTC;
 
         //water
     float waterVelocity;
 
     float waterReynoldsNumb;
     float waterPrandtlNumb;
-    float waterHTC;
+    map<int, vector<float>> waterHTC;
 
     //output
     float sumTotalAirHeatPower;
     vector<float> sumRowAirHeatPower;
     map<int, vector<float>> airAreaHeatPower;
 
-    float avgAirHTC;
     vector<float> avgAirHTCperRow;
-    map<int, vector<float>> airAreaHTC;
+    vector<float> avgAirNusseltNumbPerRow;
 
     float waterHeatPower;
     int iteration;
