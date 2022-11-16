@@ -26,7 +26,7 @@ class SimulationData{
     vector<float> avgAirTempOut;
     vector<float> avgWaterTempOut;
 
-        //air
+    //air
     float airVelocityInFrontHE;
     float airMaxVelocity;
 
@@ -41,7 +41,14 @@ class SimulationData{
     map<int, vector<float>> airBasicHTC;
     map<int, vector<float>> airReducedHTC;
 
-        //water
+    //Experiment
+    vector <float> waterQsExp;
+    vector <float> waterTempsInExp;
+    vector <float> waterTempsOutExp;
+    float airTempInExp;
+    vector <float> airTempsOutExp;
+
+    //water
     float waterVelocity;
 
     float waterReynoldsNumb;

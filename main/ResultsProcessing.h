@@ -19,4 +19,5 @@ public:
     float alfaReductBackwardCalc(int row, float airUCoefBackward);
     float alfa0BackwardCalc(int row, float alfaReductBackward);
     float airNusseltNumbCalc(int row, float alfa0Backward);
+
 };

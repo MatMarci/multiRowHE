@@ -128,7 +128,7 @@
         <item row="1" column="1">
          <widget class="QLineEdit" name="Water_Temp_In">
           <property name="text">
-           <string>85</string>
+           <string>40</string>
           </property>
          </widget>
         </item>
@@ -190,7 +190,7 @@
        <item row="2" column="1">
         <widget class="QLineEdit" name="HE_Height">
          <property name="text">
-          <string>0.4</string>
+          <string>0.35</string>
          </property>
         </widget>
        </item>
@@ -403,8 +403,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>1173</width>
-           <height>464</height>
+           <width>1183</width>
+           <height>483</height>
           </rect>
          </property>
         </widget>
@@ -427,8 +427,8 @@
           <rect>
            <x>0</x>
            <y>0</y>
-           <width>1173</width>
-           <height>464</height>
+           <width>1183</width>
+           <height>483</height>
           </rect>
          </property>
         </widget>
@@ -444,7 +444,7 @@
      <x>0</x>
      <y>0</y>
      <width>1225</width>
-     <height>25</height>
+     <height>17</height>
     </rect>
    </property>
   </widget>

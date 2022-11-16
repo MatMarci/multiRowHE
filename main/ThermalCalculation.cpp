@@ -68,9 +68,11 @@ float ThermalCalculation::waterOutTempCalc(ControlArea &area, int iteration){
     float waterOutTemp = area.m_tempsWaterOut[iteration];
 
     float internalAvgAirTemp = internalAvgAirTempCalc(area, iteration);
+    float avgWaterTemp = avgWaterTempCalc(waterInTemp, waterOutTemp);
     float waterParamN = waterParamNCalc(airInTemp, airOutTemp, waterInTemp, waterOutTemp);
 
-    float newWaterOutTemp = ((1)/(1+(waterParamN/2)))*(((1-(waterParamN/2))*waterInTemp)+(waterParamN*internalAvgAirTemp));
+    //float newWaterOutTemp = ((1)/(1+(waterParamN/2)))*(((1-(waterParamN/2))*waterInTemp)+(waterParamN*internalAvgAirTemp));
+    float newWaterOutTemp = waterInTemp+waterParamN*(internalAvgAirTemp-avgWaterTemp);
     return newWaterOutTemp;
 }
 
@@ -214,16 +216,53 @@ float ThermalCalculation::airHtcCalc(float airInTemp, float airOutTemp){ //h_a o
     float avgAirThermalCondCoef = (airThermalConductCoefCalc(airInTemp)+airThermalConductCoefCalc(airOutTemp))/2;
     float avgAirSpecHeat = (airSpecHeatCalc(airInTemp)+airSpecHeatCalc(airOutTemp))/2;
 
-    // air HTC
-    float airHtcMcQu = (colburnParamMcQu * avgAirSpecHeat *(airMassFlow/areaMin))/(pow(prandtlNumb,0.66667));
-    float airHtcMcQu_aAt = (colburnParamMcQu_aAt * avgAirSpecHeat *(airMassFlow/areaMin))/(pow(prandtlNumb,0.66667));
-    float airHtcGayWebb = (colburnParamGayWebb * avgAirSpecHeat *(airMassFlow/areaMin))/(pow(prandtlNumb,0.66667)); // Gay and Webb meet all requirements in whole range of air flow
-    this->simuData->airBasicHTC[this->config->CURRENT_ROWS].push_back(airHtcGayWebb);
+    float airHTC;
+    float a;
+    float b;
+    //float airHtcMcQu = (colburnParamMcQu * avgAirSpecHeat *(airMassFlow/areaMin))/(pow(prandtlNumb,0.66667));
+    //float airHtcMcQu_aAt = (colburnParamMcQu_aAt * avgAirSpecHeat *(airMassFlow/areaMin))/(pow(prandtlNumb,0.66667));
+    //float airHtcGayWebb = (colburnParamGayWebb * avgAirSpecHeat *(airMassFlow/areaMin))/(pow(prandtlNumb,0.66667)); // Gay and Webb meet all requirements in whole range of air flow
+    //airHTC = airHtcGayWebb;
+
+    if(reynoldsNumb_dhydr < 1400){
+        if(this->config->CURRENT_ROWS == 0){
+            a = 1.4001;
+            b = 0.3053;
+        } else if(this->config->CURRENT_ROWS == 1){
+            a = 0.9478;
+            b = 0.3386;
+        } else if(this->config->CURRENT_ROWS == 2){
+            a = 1.0403;
+            b = 0.3025;
+        } else {
+            a = 0.523;
+            b = 0.4156;
+        }
+    } else {
+        if(this->config->CURRENT_ROWS == 1){
+            a = 0.4217;
+            b = 0.47;
+        } else if(this->config->CURRENT_ROWS == 2){
+            a = 0.1305;
+            b = 0.6118;
+        } else if(this->config->CURRENT_ROWS == 3){
+            a = 0.0923;
+            b = 0.6307;
+        } else {
+            a = 0.1282;
+            b = 0.6145;
+        }
+    }
+
+    float airNuNumb = a * pow(reynoldsNumb_dhydr,b) * pow(0.7,(1/3));
+    airHTC = (airNuNumb * avgAirThermalCondCoef)/hydarulicDim;
+
+    this->simuData->airBasicHTC[this->config->CURRENT_ROWS].push_back(airHTC);
 
     //air Nusselt
-    float airNuNumb = airHtcGayWebb * this->config->OUTER_TUBE_DIAM / avgAirThermalCondCoef;
+
     this->simuData->airNusseltNumb = airNuNumb;
-    return airHtcGayWebb;
+    return airHTC;
 }
 
 float ThermalCalculation::bareTubeBetweenFinsAreaCalc(){ //A_mf
