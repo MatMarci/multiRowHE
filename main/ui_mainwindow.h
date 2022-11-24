@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created by: Qt User Interface Compiler version 5.15.0
+** Created by: Qt User Interface Compiler version 6.3.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -209,6 +209,7 @@ public:
 
         HE_Height = new QLineEdit(layoutWidget1);
         HE_Height->setObjectName(QString::fromUtf8("HE_Height"));
+        HE_Height->setEnabled(true);
 
         gridLayout_4->addWidget(HE_Height, 2, 1, 1, 1);
 
@@ -360,7 +361,7 @@ public:
         resultsAreaScroll->setWidgetResizable(true);
         scrollAreaContent = new QWidget();
         scrollAreaContent->setObjectName(QString::fromUtf8("scrollAreaContent"));
-        scrollAreaContent->setGeometry(QRect(0, 0, 1173, 464));
+        scrollAreaContent->setGeometry(QRect(0, 0, 1183, 483));
         resultsAreaScroll->setWidget(scrollAreaContent);
 
         gridLayout_7->addWidget(resultsAreaScroll, 0, 0, 1, 1);
@@ -375,7 +376,7 @@ public:
         chartArea->setWidgetResizable(true);
         scrollAreaContent_2 = new QWidget();
         scrollAreaContent_2->setObjectName(QString::fromUtf8("scrollAreaContent_2"));
-        scrollAreaContent_2->setGeometry(QRect(0, 0, 1173, 464));
+        scrollAreaContent_2->setGeometry(QRect(0, 0, 1183, 483));
         chartArea->setWidget(scrollAreaContent_2);
 
         gridLayout_2->addWidget(chartArea, 0, 0, 1, 1);
@@ -384,7 +385,7 @@ public:
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName(QString::fromUtf8("menubar"));
-        menubar->setGeometry(QRect(0, 0, 1225, 25));
+        menubar->setGeometry(QRect(0, 0, 1225, 17));
         MainWindow->setMenuBar(menubar);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName(QString::fromUtf8("statusbar"));
@@ -404,19 +405,20 @@ public:
         pushButton->setText(QCoreApplication::translate("MainWindow", "Calculate", nullptr));
         label_38->setText(QCoreApplication::translate("MainWindow", "Air parameters:", nullptr));
         label_17->setText(QCoreApplication::translate("MainWindow", "Temperature - Inlet [C]", nullptr));
-        Air_Temp_In->setText(QCoreApplication::translate("MainWindow", "20", nullptr));
+        Air_Temp_In->setText(QCoreApplication::translate("MainWindow", "23.34", nullptr));
         label_15->setText(QCoreApplication::translate("MainWindow", "Air Flow(s) [m3/h]", nullptr));
-        Air_Flows->setText(QCoreApplication::translate("MainWindow", "600", nullptr));
+        Air_Flows->setText(QCoreApplication::translate("MainWindow", "741.8", nullptr));
         label_40->setText(QCoreApplication::translate("MainWindow", "Water parameters:", nullptr));
         label_41->setText(QCoreApplication::translate("MainWindow", "Temperature - Inlet [C]", nullptr));
-        Water_Temp_In->setText(QCoreApplication::translate("MainWindow", "85", nullptr));
+        Water_Temp_In->setText(QCoreApplication::translate("MainWindow", "40.17", nullptr));
         label_42->setText(QCoreApplication::translate("MainWindow", "Water Flow(s) [kg/s]", nullptr));
-        Water_Flows->setText(QCoreApplication::translate("MainWindow", "1", nullptr));
+        Water_Flows->setText(QCoreApplication::translate("MainWindow", "0.2893", nullptr));
         label_16->setText(QCoreApplication::translate("MainWindow", "Heat Exchanger geometrical parameters:", nullptr));
         label->setText(QCoreApplication::translate("MainWindow", "Length [m]", nullptr));
         HE_Lenght->setText(QCoreApplication::translate("MainWindow", "0.6", nullptr));
         label_2->setText(QCoreApplication::translate("MainWindow", "Height [m]", nullptr));
-        HE_Height->setText(QCoreApplication::translate("MainWindow", "0.4", nullptr));
+        HE_Height->setText(QCoreApplication::translate("MainWindow", "0.35", nullptr));
+        HE_Height->setPlaceholderText(QCoreApplication::translate("MainWindow", "0.324", nullptr));
         label_3->setText(QCoreApplication::translate("MainWindow", "Tube Pitch [mm]", nullptr));
         Tube_Pitch->setText(QCoreApplication::translate("MainWindow", "32", nullptr));
         label_4->setText(QCoreApplication::translate("MainWindow", "Row Pitch [mm]", nullptr));

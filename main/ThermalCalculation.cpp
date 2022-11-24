@@ -137,7 +137,7 @@ float ThermalCalculation::reductAirHtcCalc(float airInTemp, float airOutTemp){ /
     float outBareTubeArea = outBareTubeAreaCalc();  //A_o
 
     float reductAirHtc = airHtc * ((bareTubeBetweenFinsArea/outBareTubeArea)+(this->config->FIN_EFF*finsArea/outBareTubeArea));
-    this->simuData->airReducedHTC[this->config->CURRENT_ROWS].push_back(reductAirHtc);
+    this->simuData->airReducedHTCANalPerRow[this->config->CURRENT_ROWS].push_back(reductAirHtc);
     return reductAirHtc;
 }
 
@@ -257,11 +257,10 @@ float ThermalCalculation::airHtcCalc(float airInTemp, float airOutTemp){ //h_a o
     float airNuNumb = a * pow(reynoldsNumb_dhydr,b) * pow(0.7,(1/3));
     airHTC = (airNuNumb * avgAirThermalCondCoef)/hydarulicDim;
 
-    this->simuData->airBasicHTC[this->config->CURRENT_ROWS].push_back(airHTC);
+    this->simuData->airBasicHTCAnalPerRow[this->config->CURRENT_ROWS].push_back(airHTC);
 
     //air Nusselt
-
-    this->simuData->airNusseltNumb = airNuNumb;
+    this->simuData->airNusseltAnalPerRow[this->config->CURRENT_ROWS].push_back(airNuNumb);
     return airHTC;
 }
 
@@ -275,8 +274,8 @@ float ThermalCalculation::finAreaCalc(){ //A_f
     //fin area for staggered pipe layout
     //calculation from "Rozwiązywanie prostych i odwrotnych zagadnień przewodzenia ciepła" - J.Taler; P.Duda - page 101
 
-    float OD = pow(((pow((this->config->TUBE_PITCH/2),2))+(pow(this->config->ROW_PITCH,2))),0.5);
-    float phi = asin(this->config->TUBE_PITCH/(2.0*OD));
+    float OD = pow(((pow((this->config->TUBE_PITCH/2.0),2))+(pow(this->config->ROW_PITCH,2))),0.5);
+    float phi = asin(this->config->TUBE_PITCH/(2*OD));
     float gamma = (3.14/2.0) - 2.0*phi;
     float AB = this->config->TUBE_PITCH * tan(gamma);
     float h_oab = this->config->TUBE_PITCH/2;
@@ -285,7 +284,8 @@ float ThermalCalculation::finAreaCalc(){ //A_f
     float BC = OD * tan(phi);
     float A_obc = 0.25 * BC * OD; //one side fin area, without top fin, because continoues fin and symmetry
 
-    float finsArea = 2 * (2.0*A_oab + 4.0*A_obc) * this->config->FINS_PER_AREA;
+    float oneSideFinArea = 2.0*A_oab + 4.0*A_obc;
+    float finsArea = 2 * oneSideFinArea * this->config->FINS_PER_AREA;
     this->simuData->airFinsArea = finsArea;
     this->simuData->pipesInRow = this->config->TUBES_IN_ROW;
     return finsArea;
@@ -316,10 +316,17 @@ float ThermalCalculation::airReynoldsNumb_dhydrCalc(float airInTemp, float airOu
 }
 
 float ThermalCalculation::airHydraulicDimCalc(){
-    float areaMin = (this->config->FIN_PITCH-this->config->FIN_THICK)*(this->config->TUBE_PITCH-this->config->OUTER_TUBE_DIAM)*this->config->FINS_PER_AREA;
-    float bareTubeBet = 2*3.14*(this->config->OUTER_TUBE_DIAM/2)*(this->config->FIN_PITCH - this->config->FIN_THICK);
+    float bareTubeLength = this->config->FIN_PITCH-this->config->FIN_THICK;
+    float rowPitch = this->config->ROW_PITCH;
+    float tubePitch = this->config->TUBE_PITCH;
+    float tubeDiam = this->config->OUTER_TUBE_DIAM;
 
-    float hydraulicDim = (4*(areaMin/this->config->FINS_PER_AREA)*2*this->config->TUBE_PITCH)/((finAreaCalc()/this->config->FINS_PER_AREA) + bareTubeBet);
+    float areaMin = bareTubeLength*(tubePitch-tubeDiam);
+    float bareTubeBetweenArea = 2*3.14*(tubeDiam/2)*(bareTubeLength);
+    float finArea = finAreaCalc()/this->config->FINS_PER_AREA;
+    float volumeForOnePipe = (finArea/2)*(bareTubeLength);
+
+    float hydraulicDim = (4*volumeForOnePipe)/(finArea + bareTubeBetweenArea);
     //float hydraulicDim2 = (4*(areaMin)*2*TUBE_PITCH)/((finAreaCalc()) + bareTubeBetweenFinsAreaCalc());
     this->simuData->airHydraulicDiam = hydraulicDim;
     return hydraulicDim;

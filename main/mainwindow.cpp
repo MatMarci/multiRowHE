@@ -28,6 +28,7 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+    ui->HE_Height->setPlaceholderText("0.35");
 }
 
 MainWindow::~MainWindow()
@@ -107,7 +108,7 @@ void MainWindow::on_pushButton_clicked()
         QTableWidget *generalResults = new QTableWidget();
         generalResults->verticalScrollBar()->setDisabled(true);
         generalResults->setMinimumHeight(600);
-        generalResults->setRowCount(15);
+        generalResults->setRowCount(20);
         generalResults->setColumnCount(8);
 
         QLabel *tempTitle = new QLabel(this);
@@ -134,6 +135,7 @@ void MainWindow::on_pushButton_clicked()
 
 
         //prepare general table
+        //air
         generalResults->setSpan(0,0,1,3);
         generalResults->setItem(0,0, new QTableWidgetItem("Air"));
 
@@ -145,80 +147,99 @@ void MainWindow::on_pushButton_clicked()
         generalResults->setItem(2,1, (new QTableWidgetItem(QString::number(simDataList[0].airMaxVelocity))));
         generalResults->setItem(2,2, new QTableWidgetItem("m/s"));
 
-        generalResults->setItem(3,0, new QTableWidgetItem("Re"));
+        generalResults->setItem(3,0, new QTableWidgetItem("Re_avg"));
         generalResults->setItem(3,1, (new QTableWidgetItem(QString::number(simDataList[0].airReynoldsNumb))));
 
         generalResults->setItem(4,0, new QTableWidgetItem("Pr"));
         generalResults->setItem(4,1, (new QTableWidgetItem(QString::number(simDataList[0].airPrandtlNumb))));
 
-        generalResults->setItem(5,0, new QTableWidgetItem("α_0"));
-        generalResults->setItem(5,1, (new QTableWidgetItem(QString::number(simDataList[0].airBasicHTC[0].back()))));
+        generalResults->setItem(5,0, new QTableWidgetItem("α_0,avg"));
+        generalResults->setItem(5,1, (new QTableWidgetItem(QString::number(simDataList[0].airBasicHTCAnalPerRow[0].back()))));
         generalResults->setItem(5,2, new QTableWidgetItem("W/(m.K)"));
 
-        generalResults->setItem(6,0, new QTableWidgetItem("α_zr"));
-        generalResults->setItem(6,1, (new QTableWidgetItem(QString::number(simDataList[0].airReducedHTC[0].back()))));
+        generalResults->setItem(6,0, new QTableWidgetItem("α_zr,avg"));
+        generalResults->setItem(6,1, (new QTableWidgetItem(QString::number(simDataList[0].airReducedHTCANalPerRow[0].back()))));
         generalResults->setItem(6,2, new QTableWidgetItem("W/(m.K)"));
 
-        generalResults->setItem(7,0, new QTableWidgetItem("Q_air"));
-        generalResults->setItem(7,1, (new QTableWidgetItem(QString::number(simDataList[0].sumTotalAirHeatPower))));
-        generalResults->setItem(7,2, new QTableWidgetItem("W"));
+        generalResults->setItem(7,0, new QTableWidgetItem("Nu"));
+        generalResults->setItem(7,1, (new QTableWidgetItem(QString::number(simDataList[0].airNusseltNumb))));
+        generalResults->setItem(7,2, new QTableWidgetItem("-"));
 
-        generalResults->setItem(8,0, new QTableWidgetItem("Nu"));
-        generalResults->setItem(8,1, (new QTableWidgetItem(QString::number(simDataList[0].airNusseltNumb))));
-        generalResults->setItem(8,2, new QTableWidgetItem("-"));
-
+        generalResults->setItem(8,0, new QTableWidgetItem("Q_air,tot"));
+        generalResults->setItem(8,1, (new QTableWidgetItem(QString::number(simDataList[0].sumTotalAirHeatPower))));
+        generalResults->setItem(8,2, new QTableWidgetItem("W"));
 
         generalResults->setItem(10,0, new QTableWidgetItem("iteration"));
         generalResults->setItem(10,1, (new QTableWidgetItem(QString::number(simDataList[0].iteration))));
         generalResults->setItem(10,2, new QTableWidgetItem("-"));
 
 
-        generalResults->setItem(11,0, new QTableWidgetItem("Q_1 [W]"));
-        generalResults->setItem(11,1, (new QTableWidgetItem(QString::number(simDataList[0].sumRowAirHeatPower[0]))));
-
-        generalResults->setItem(12,0, new QTableWidgetItem("Q_2 [W]"));
-        generalResults->setItem(12,1, (new QTableWidgetItem(QString::number(simDataList[0].sumRowAirHeatPower[1]))));
-
-        generalResults->setItem(13,0, new QTableWidgetItem("Q_3 [W]"));
-        generalResults->setItem(13,1, (new QTableWidgetItem(QString::number(simDataList[0].sumRowAirHeatPower[2]))));
-
-        generalResults->setItem(14,0, new QTableWidgetItem("Q_4 [W]"));
-        generalResults->setItem(14,1, (new QTableWidgetItem(QString::number(simDataList[0].sumRowAirHeatPower[3]))));
+        //Air per row
+        generalResults->setItem(14,0, new QTableWidgetItem("R1"));
+        generalResults->setItem(15,0, new QTableWidgetItem("R2"));
+        generalResults->setItem(16,0, new QTableWidgetItem("R3"));
+        generalResults->setItem(17,0, new QTableWidgetItem("R4"));
 
 
-        /////////////////backward HTC
-        generalResults->setItem(11,3, new QTableWidgetItem("α_1 [W/(m^2.K)]"));
-        generalResults->setItem(11,4, (new QTableWidgetItem(QString::number(simDataList[0].avgAirHTCperRow[0]))));
+        //Info - analytical
+        generalResults->setItem(11,0, new QTableWidgetItem("Air - analytical"));
+        //Qa - title
+        generalResults->setItem(12,1, new QTableWidgetItem("Q_a"));
+        generalResults->setItem(13,1, new QTableWidgetItem("[W]"));
+        //Qa
+        generalResults->setItem(14,1, (new QTableWidgetItem(QString::number(simDataList[0].sumRowAirHeatPower[0]))));
+        generalResults->setItem(15,1, (new QTableWidgetItem(QString::number(simDataList[0].sumRowAirHeatPower[1]))));
+        generalResults->setItem(16,1, (new QTableWidgetItem(QString::number(simDataList[0].sumRowAirHeatPower[2]))));
+        generalResults->setItem(17,1, (new QTableWidgetItem(QString::number(simDataList[0].sumRowAirHeatPower[3]))));
 
-        generalResults->setItem(12,3, new QTableWidgetItem("α_2 [W/(m^2.K)]"));
-        generalResults->setItem(12,4, (new QTableWidgetItem(QString::number(simDataList[0].avgAirHTCperRow[1]))));
+        //air HTC alfa - title
+        generalResults->setItem(12,2, new QTableWidgetItem("α_a"));
+        generalResults->setItem(13,2, new QTableWidgetItem("[W/(m^2.K]"));
+        //air HTC alfa air
+        generalResults->setItem(14,2, (new QTableWidgetItem(QString::number(simDataList[0].airBasicHTCAnalPerRow[0].back()))));
+        generalResults->setItem(15,2, (new QTableWidgetItem(QString::number(simDataList[0].airBasicHTCAnalPerRow[1].back()))));
+        generalResults->setItem(16,2, (new QTableWidgetItem(QString::number(simDataList[0].airBasicHTCAnalPerRow[2].back()))));
+        generalResults->setItem(17,2, (new QTableWidgetItem(QString::number(simDataList[0].airBasicHTCAnalPerRow[3].back()))));
 
-        generalResults->setItem(13,3, new QTableWidgetItem("α_3 [W/(m^2.K)]"));
-        generalResults->setItem(13,4, (new QTableWidgetItem(QString::number(simDataList[0].avgAirHTCperRow[2]))));
-
-        generalResults->setItem(14,3, new QTableWidgetItem("α_4 [W/(m^2.K)]"));
-        generalResults->setItem(14,4, (new QTableWidgetItem(QString::number(simDataList[0].avgAirHTCperRow[3]))));
-
-
-        ////////////////basic HTC
-        generalResults->setItem(11,5, (new QTableWidgetItem(QString::number(simDataList[0].airBasicHTC[0].back()))));
-        generalResults->setItem(12,5, (new QTableWidgetItem(QString::number(simDataList[0].airBasicHTC[1].back()))));
-        generalResults->setItem(13,5, (new QTableWidgetItem(QString::number(simDataList[0].airBasicHTC[2].back()))));
-        generalResults->setItem(14,5, (new QTableWidgetItem(QString::number(simDataList[0].airBasicHTC[3].back()))));
+        //air NU - title
+        generalResults->setItem(12,3, new QTableWidgetItem("Nu_a"));
+        generalResults->setItem(13,3, new QTableWidgetItem("[-]"));
+        //air Nu
+        generalResults->setItem(14,3, (new QTableWidgetItem(QString::number(simDataList[0].airNusseltAnalPerRow[0].back()))));
+        generalResults->setItem(15,3, (new QTableWidgetItem(QString::number(simDataList[0].airNusseltAnalPerRow[1].back()))));
+        generalResults->setItem(16,3, (new QTableWidgetItem(QString::number(simDataList[0].airNusseltAnalPerRow[2].back()))));
+        generalResults->setItem(17,3, (new QTableWidgetItem(QString::number(simDataList[0].airNusseltAnalPerRow[3].back()))));
 
 
-        //////////////backward Nu
-        generalResults->setItem(11,6, new QTableWidgetItem("Nu_1"));
-        generalResults->setItem(11,7, (new QTableWidgetItem(QString::number(simDataList[0].avgAirNusseltNumbPerRow[0]))));
+        //Info - experimental
+        generalResults->setItem(11,4, new QTableWidgetItem("Air - experimental"));
+        //Qa, exp - title
+        generalResults->setItem(12,4, new QTableWidgetItem("Q_a"));
+        generalResults->setItem(13,4, new QTableWidgetItem("[W]"));
+        //Qa, exp
+        generalResults->setItem(14,4, (new QTableWidgetItem(QString::number(simDataList[0].airHeatPowersExp[0]))));
+        generalResults->setItem(15,4, (new QTableWidgetItem(QString::number(simDataList[0].airHeatPowersExp[1]))));
+        generalResults->setItem(16,4, (new QTableWidgetItem(QString::number(simDataList[0].airHeatPowersExp[2]))));
+        generalResults->setItem(17,4, (new QTableWidgetItem(QString::number(simDataList[0].airHeatPowersExp[3]))));
 
-        generalResults->setItem(12,6, new QTableWidgetItem("Nu_2"));
-        generalResults->setItem(12,7, (new QTableWidgetItem(QString::number(simDataList[0].avgAirNusseltNumbPerRow[1]))));
+        //air HTC alfa, exp - title
+        generalResults->setItem(12,5, new QTableWidgetItem("α_a"));
+        generalResults->setItem(13,5, new QTableWidgetItem("[W/(m^2.K]"));
+        //air HTC alfa, exp
+        generalResults->setItem(14,5, (new QTableWidgetItem(QString::number(simDataList[0].avgAirHTCperRow[0]))));
+        generalResults->setItem(15,5, (new QTableWidgetItem(QString::number(simDataList[0].avgAirHTCperRow[1]))));
+        generalResults->setItem(16,5, (new QTableWidgetItem(QString::number(simDataList[0].avgAirHTCperRow[2]))));
+        generalResults->setItem(17,5, (new QTableWidgetItem(QString::number(simDataList[0].avgAirHTCperRow[3]))));
 
-        generalResults->setItem(13,6, new QTableWidgetItem("Nu_3"));
-        generalResults->setItem(13,7, (new QTableWidgetItem(QString::number(simDataList[0].avgAirNusseltNumbPerRow[2]))));
+        //air NU, exp - title
+        generalResults->setItem(12,6, new QTableWidgetItem("Nu_a"));
+        generalResults->setItem(13,6, new QTableWidgetItem("[-]"));
+        //air Nu, exp
+        generalResults->setItem(14,6, (new QTableWidgetItem(QString::number(simDataList[0].avgAirNusseltNumbPerRow[0]))));
+        generalResults->setItem(15,6, (new QTableWidgetItem(QString::number(simDataList[0].avgAirNusseltNumbPerRow[1]))));
+        generalResults->setItem(16,6, (new QTableWidgetItem(QString::number(simDataList[0].avgAirNusseltNumbPerRow[2]))));
+        generalResults->setItem(17,6, (new QTableWidgetItem(QString::number(simDataList[0].avgAirNusseltNumbPerRow[3]))));
 
-        generalResults->setItem(14,6, new QTableWidgetItem("Nu_4"));
-        generalResults->setItem(14,7, (new QTableWidgetItem(QString::number(simDataList[0].avgAirNusseltNumbPerRow[3]))));
 
 
         generalResults->setSpan(0,4,1,3);
@@ -243,18 +264,11 @@ void MainWindow::on_pushButton_clicked()
         generalResults->setItem(5,6, new QTableWidgetItem("W"));
 
 
-        /////////////////basic water HTC
-        generalResults->setItem(6,4, new QTableWidgetItem("α_1 [W/(m^2.K)]"));
-        generalResults->setItem(6,5, (new QTableWidgetItem(QString::number(simDataList[0].waterHTC[0].back()))));
 
-        generalResults->setItem(7,4, new QTableWidgetItem("α_2 [W/(m^2.K)]"));
-        generalResults->setItem(7,5, (new QTableWidgetItem(QString::number(simDataList[0].waterHTC[1].back()))));
 
-        generalResults->setItem(8,4, new QTableWidgetItem("α_3 [W/(m^2.K)]"));
-        generalResults->setItem(8,5, (new QTableWidgetItem(QString::number(simDataList[0].waterHTC[2].back()))));
 
-        generalResults->setItem(9,4, new QTableWidgetItem("α_4 [W/(m^2.K)]"));
-        generalResults->setItem(9,5, (new QTableWidgetItem(QString::number(simDataList[0].waterHTC[3].back()))));
+
+
 
 
         //prepare Temp Table

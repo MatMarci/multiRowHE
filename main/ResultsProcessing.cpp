@@ -15,10 +15,10 @@ void ResultsProcessing::airNusseltPerRowCalc(){
     float airUCoefBackward;
     float alfaReductBackward;
     float alfa0Backward;
-    float airNusseltuNumb;
+
 
     for(auto row = 0; row < (int)(this->simuData->areas.size()); row++){
-
+        float airNusseltuNumb = 0;
         //to separate
         float sumAirTempIn = 0;
         float sumAirTempOut = 0;
@@ -34,18 +34,24 @@ void ResultsProcessing::airNusseltPerRowCalc(){
 
         float airMassFlow = tc.airMassFlowCalc(avgAirTempIn, avgAirTempOut) * config->CONTROL_AREAS;
         float avgAirSpecHeat = (tc.airSpecHeatCalc(avgAirTempOut)+tc.airSpecHeatCalc(avgAirTempIn))/2;
-        float ma_ca = airMassFlow*avgAirSpecHeat;
 
         //data from experiment
-        this->simuData->waterQsExp = {1100, 800, 700, 600};
-        this->simuData->waterTempsInExp = {40,40,40,40};
-        this->simuData->waterTempsOutExp = {38.6, 37.5, 36.4, 35.3};
+        int tubesInRow = this->config->TUBES_IN_ROW;
+        float qWR1 = 896.19/tubesInRow;
+        float qWR2 = qWR1 + (681.93/tubesInRow);
+        float qWR3 = qWR2 + (545.31/tubesInRow);
+        float qWR4 = qWR3 + (422.24/tubesInRow);
+        this->simuData->waterQsExp = {qWR1, qWR2, qWR3, qWR4};
+        this->simuData->airHeatPowersExp = {896.19, 681.93, 545.31, 422.24};
+        this->simuData->waterTempsInExp = {40.17,40.17,40.17,40.17};
+        this->simuData->waterTempsOutExp = {37.17, 37.89, 38.36, 38.76};
 
-        this->simuData->airTempInExp = 23.3;
+        this->simuData->airTempInExp = 23.34;
         float airTempInExp = this->simuData->airTempInExp;
         float airTempOutExpCalc = 0;
-        for(int i=0; i++; i<this->simuData->airBareTubeArea* config->CONTROL_AREAS){
-            airTempOutExpCalc = airTempInExp + (this->simuData->waterQsExp[i]/(airMassFlow*avgAirSpecHeat));
+        (this->simuData->airTempsOutExp).push_back(airTempInExp);
+        for(int i=1; i<this->config->ROWS+1; i++){
+            airTempOutExpCalc = airTempInExp + (this->simuData->waterQsExp[i-1]/(airMassFlow*avgAirSpecHeat));
             (this->simuData->airTempsOutExp).push_back(airTempOutExpCalc);
         }
 
@@ -107,41 +113,33 @@ float ResultsProcessing::airUCoefBackwardCalc(int row){
     float etaError = 0.001;
     float errorCalc;
     float airTempOutCalc = 0;
-    float Ucoef = 100;
-    float step = 0.001;
+    float Ucoef =100;
+    float step = 0.1;
 
-    float Na = (Ucoef*bareTubeArea)/(ma_ca);
+    float Na = 0;
     //float Nw = (Ucoef*bareTubeArea)/(mw_cw);
     //float B;
     float avgWaterTempExp = ((this->simuData->waterTempsInExp[row] + this->simuData->waterTempsOutExp[row])/2);
+    float airTempInExp = this->simuData->airTempsOutExp[row];
+    float airTempOutExp = this->simuData->airTempsOutExp[row+1];
 
     do{
         Ucoef += step;
         Na = (Ucoef*bareTubeArea)/(ma_ca);
         //Nw = (Ucoef*bareTubeArea)/(mw_cw);
         //B = (Nw/Na)*(1-exp(-Na));
-        airTempOutCalc = avgWaterTempExp - (avgWaterTempExp-this->simuData->airTempsOutExp[row])*(exp(-Na));
-        errorCalc = abs(this->simuData->airTempsOutExp[row] - airTempOutCalc);
+        airTempOutCalc = avgWaterTempExp - ((avgWaterTempExp-airTempInExp)*(exp(-Na)));
+        errorCalc = abs(airTempOutCalc - airTempOutExp);
     }
     while(etaError < errorCalc);
     return Ucoef;
 }
 
 float ResultsProcessing::alfaReductBackwardCalc(int row, float airUCoefBackward){
-    float sumAirTempIn = 0;
-    float sumAirTempOut = 0;
-    float airInTemp = 0;
-    float airOutTemp = 0;
-
-    for(auto area = 0; area < (int)(this->simuData->areas[row].size()); area++){
-        sumAirTempIn += this->simuData->areas[row][area].m_tempsAirIn.back();
-        sumAirTempOut += this->simuData->areas[row][area].m_tempsAirOut.back();
-    }
-    airInTemp = sumAirTempIn / config->CONTROL_AREAS;
-    airOutTemp = sumAirTempOut / config->CONTROL_AREAS;
-
-    float waterInTemp = this->simuData->areas[row][0].m_tempsWaterIn.back();
-    float waterOutTemp = this->simuData->areas[row][this->config->CONTROL_AREAS-1].m_tempsWaterOut.back();
+    //float airInTemp = this->simuData->airTempsOutExp[row];
+    //float airOutTemp = this->simuData->airTempsOutExp[row+1];
+    float waterInTemp = this->simuData->waterTempsInExp[row];
+    float waterOutTemp = this->simuData->waterTempsOutExp[row];
 
     ThermalCalculation tc(this->simuData, this->config);
     float outBareTubeArea = tc.outBareTubeAreaCalc();  //A_o
@@ -187,9 +185,9 @@ float ResultsProcessing::airNusseltNumbCalc(int row, float alfa0Backward){
     airOutTemp = sumAirTempOut / config->CONTROL_AREAS;
 
     float avgAirThermalCondCoef = (tc.airThermalConductCoefCalc(airInTemp)+tc.airThermalConductCoefCalc(airOutTemp))/2;
-    float minDim = tc.airMinDimensionCalc();
+    float hydDim = tc.airHydraulicDimCalc();
 
-    float avgAirNusseltNumb = alfa0Backward * minDim / avgAirThermalCondCoef;
+    float avgAirNusseltNumb = alfa0Backward * hydDim / avgAirThermalCondCoef;
     this->simuData->avgAirNusseltNumbPerRow.push_back(avgAirNusseltNumb);
     return avgAirNusseltNumb;
 }
