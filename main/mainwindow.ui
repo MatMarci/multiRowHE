@@ -193,7 +193,7 @@
           <bool>true</bool>
          </property>
          <property name="text">
-          <string>0.35</string>
+          <string>0.352</string>
          </property>
          <property name="placeholderText">
           <string>0.324</string>
@@ -366,7 +366,7 @@
         <item row="3" column="1">
          <widget class="QLineEdit" name="Fin_Thickness">
           <property name="text">
-           <string>0.14</string>
+           <string>0.2</string>
           </property>
           <property name="maxLength">
            <number>32766</number>
@@ -383,7 +383,7 @@
         <item row="4" column="1">
          <widget class="QLineEdit" name="Fin_Efficiency">
           <property name="text">
-           <string>0.8765</string>
+           <string>-</string>
           </property>
          </widget>
         </item>

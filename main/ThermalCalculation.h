@@ -51,7 +51,7 @@ public:
     float airPrandtlNumbCalc(float airTemp);
 
     float waterReynoldsNumbCalc(float waterInTemp, float waterOutTemp);
-    float waterPrandtlNumbCalc(float airInTemp, float airOutTemp);
+    float waterPrandtlNumbCalc(float waterInTemp, float waterOutTemp);
     float waterPrandtlNumbCalc(float waterTemp);
 
     float airThermalConductCoefCalc(float airTemp);

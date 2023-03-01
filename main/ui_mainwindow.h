@@ -417,7 +417,7 @@ public:
         label->setText(QCoreApplication::translate("MainWindow", "Length [m]", nullptr));
         HE_Lenght->setText(QCoreApplication::translate("MainWindow", "0.6", nullptr));
         label_2->setText(QCoreApplication::translate("MainWindow", "Height [m]", nullptr));
-        HE_Height->setText(QCoreApplication::translate("MainWindow", "0.35", nullptr));
+        HE_Height->setText(QCoreApplication::translate("MainWindow", "0.352", nullptr));
         HE_Height->setPlaceholderText(QCoreApplication::translate("MainWindow", "0.324", nullptr));
         label_3->setText(QCoreApplication::translate("MainWindow", "Tube Pitch [mm]", nullptr));
         Tube_Pitch->setText(QCoreApplication::translate("MainWindow", "32", nullptr));
@@ -439,9 +439,9 @@ public:
         label_37->setText(QCoreApplication::translate("MainWindow", "Fin Pitch [mm]", nullptr));
         Fin_Pitch->setText(QCoreApplication::translate("MainWindow", "3", nullptr));
         label_35->setText(QCoreApplication::translate("MainWindow", "Fin Thickness [mm]", nullptr));
-        Fin_Thickness->setText(QCoreApplication::translate("MainWindow", "0.14", nullptr));
+        Fin_Thickness->setText(QCoreApplication::translate("MainWindow", "0.2", nullptr));
         label_39->setText(QCoreApplication::translate("MainWindow", "Fin Efficiency [-]", nullptr));
-        Fin_Efficiency->setText(QCoreApplication::translate("MainWindow", "0.8765", nullptr));
+        Fin_Efficiency->setText(QCoreApplication::translate("MainWindow", "-", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(params), QCoreApplication::translate("MainWindow", "Parameters", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(general_results), QCoreApplication::translate("MainWindow", "General Results", nullptr));
         tabWidget->setTabText(tabWidget->indexOf(chart), QCoreApplication::translate("MainWindow", "Page", nullptr));

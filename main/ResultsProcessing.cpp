@@ -37,12 +37,17 @@ void ResultsProcessing::airNusseltPerRowCalc(){
 
         //data from experiment
         int tubesInRow = this->config->TUBES_IN_ROW;
-        float qWR1 = 896.19/tubesInRow;
-        float qWR2 = qWR1 + (681.93/tubesInRow);
-        float qWR3 = qWR2 + (545.31/tubesInRow);
-        float qWR4 = qWR3 + (422.24/tubesInRow);
+        float QR1 = 896.2;
+        float QR2 = 681.9;
+        float QR3 = 545.3;
+        float QR4 = 422.2;
+
+        float qWR1 = QR1/tubesInRow;
+        float qWR2 = qWR1 + (QR2/tubesInRow);
+        float qWR3 = qWR2 + (QR3/tubesInRow);
+        float qWR4 = qWR3 + (QR4/tubesInRow);
         this->simuData->waterQsExp = {qWR1, qWR2, qWR3, qWR4};
-        this->simuData->airHeatPowersExp = {896.19, 681.93, 545.31, 422.24};
+        this->simuData->airHeatPowersExp = {QR1, QR2, QR3, QR4};
         this->simuData->waterTempsInExp = {40.17,40.17,40.17,40.17};
         this->simuData->waterTempsOutExp = {37.17, 37.89, 38.36, 38.76};
 

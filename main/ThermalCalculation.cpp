@@ -71,8 +71,8 @@ float ThermalCalculation::waterOutTempCalc(ControlArea &area, int iteration){
     float avgWaterTemp = avgWaterTempCalc(waterInTemp, waterOutTemp);
     float waterParamN = waterParamNCalc(airInTemp, airOutTemp, waterInTemp, waterOutTemp);
 
-    //float newWaterOutTemp = ((1)/(1+(waterParamN/2)))*(((1-(waterParamN/2))*waterInTemp)+(waterParamN*internalAvgAirTemp));
-    float newWaterOutTemp = waterInTemp+waterParamN*(internalAvgAirTemp-avgWaterTemp);
+    float newWaterOutTemp = ((1.0)/(1.0+(waterParamN/2.0)))*(((1.0-(waterParamN/2.0))*waterInTemp)+(waterParamN*internalAvgAirTemp));
+    //float newWaterOutTemp = waterInTemp+waterParamN*(internalAvgAirTemp-avgWaterTemp);
     return newWaterOutTemp;
 }
 
@@ -85,7 +85,7 @@ float ThermalCalculation::internalAvgAirTempCalc(ControlArea &area, int iteratio
     float avgWaterTemp = avgWaterTempCalc(waterInTemp, waterOutTemp);
     float airParamN = airParamNCalc(airInTemp, airOutTemp, waterInTemp, waterOutTemp);
 
-    float avgAirTemp = avgWaterTemp - ((1/airParamN)*(avgWaterTemp-airInTemp)*(1-exp(-airParamN)));
+    float avgAirTemp = avgWaterTemp - ((1.0/airParamN)*(avgWaterTemp-airInTemp)*(1.0-exp(-airParamN)));
     return avgAirTemp;
 }
 
@@ -97,7 +97,7 @@ float ThermalCalculation::airParamNCalc(float airInTemp, float airOutTemp, float
     float UCoef = UCoefCalc(airInTemp, airOutTemp, waterInTemp, waterOutTemp);
     float outBareTubeArea = outBareTubeAreaCalc();
     float airMassFlow = airMassFlowCalc(airInTemp, airOutTemp);
-    float avgSpecHeat = (airSpecHeatCalc(airInTemp)+airSpecHeatCalc(airOutTemp))/2;
+    float avgSpecHeat = (airSpecHeatCalc(airInTemp)+airSpecHeatCalc(airOutTemp))/2.0;
 
     float airParamN = (UCoef * outBareTubeArea)/(airMassFlow * avgSpecHeat);
     return airParamN;
@@ -107,7 +107,7 @@ float ThermalCalculation::waterParamNCalc(float airInTemp, float airOutTemp, flo
     float UCoef = UCoefCalc(airInTemp, airOutTemp, waterInTemp, waterOutTemp);
     float outBareTubeArea = outBareTubeAreaCalc();
     float waterMassFlow = this->config->WATER_FLOW_PER_TUBE;
-    float avgWaterSpecHeat = (waterSpecHeatCalc(waterInTemp)+waterSpecHeatCalc(waterOutTemp))/2;
+    float avgWaterSpecHeat = (waterSpecHeatCalc(waterInTemp)+waterSpecHeatCalc(waterOutTemp))/2.0;
 
     float airParamN = (UCoef * outBareTubeArea)/(waterMassFlow * avgWaterSpecHeat);
     return airParamN;
@@ -117,16 +117,16 @@ float ThermalCalculation::UCoefCalc(float airInTemp, float airOutTemp, float wat
     float reductAirHtc = reductAirHtcCalc(airInTemp, airOutTemp);
     float outBareTubeArea = outBareTubeAreaCalc();  //A_o
     float inBareTubeArea = inBareTubeAreaCalc();  //A_in
-    float avgTubeArea = (inBareTubeArea+outBareTubeArea)/2; //A_m
+    float avgTubeArea = (inBareTubeArea+outBareTubeArea)/2.0; //A_m
     float waterHtc = waterHtcCalc(waterInTemp, waterOutTemp);
 
-    float airUCoef = 1/((1/reductAirHtc)+((avgTubeArea/inBareTubeArea)*(this->config->TUBE_WALL_THICK/this->config->FIN_THERMAL_CONDUCT_COEF))+((outBareTubeArea/inBareTubeArea)*(1/waterHtc)));
+    float airUCoef = 1.0/((1.0/reductAirHtc)+((avgTubeArea/inBareTubeArea)*(this->config->TUBE_WALL_THICK/this->config->FIN_THERMAL_CONDUCT_COEF))+((outBareTubeArea/inBareTubeArea)*(1.0/waterHtc)));
     return airUCoef;
 }
 
 float ThermalCalculation::airMassFlowCalc(float airInTemp, float airOutTemp){ //delta m_a
     float avgAirDens = (airDensCalc(airInTemp)+airDensCalc(airOutTemp))/2.0;
-    float airMassFlow = (this->config->AIR_FLOW_PER_AREA/3600) * avgAirDens;
+    float airMassFlow = (this->config->AIR_FLOW_PER_AREA/3600.0) * avgAirDens;
     return airMassFlow;
 }
 
@@ -135,14 +135,17 @@ float ThermalCalculation::reductAirHtcCalc(float airInTemp, float airOutTemp){ /
     float bareTubeBetweenFinsArea = bareTubeBetweenFinsAreaCalc();   // A_mf
     float finsArea = finAreaCalc(); //A_f
     float outBareTubeArea = outBareTubeAreaCalc();  //A_o
+    //float finEff = this->config->FIN_EFF;
+    float finEff = (-1.0*pow(10,-8)*pow(airHtc,3))+(1.0*pow(10,-5)*pow(airHtc,2))-(0.004*airHtc) + 0.9939;
+    this->config->FIN_EFF = finEff;
 
-    float reductAirHtc = airHtc * ((bareTubeBetweenFinsArea/outBareTubeArea)+(this->config->FIN_EFF*finsArea/outBareTubeArea));
+    float reductAirHtc = airHtc * ((bareTubeBetweenFinsArea/outBareTubeArea)+(finEff*finsArea/outBareTubeArea));
     this->simuData->airReducedHTCANalPerRow[this->config->CURRENT_ROWS].push_back(reductAirHtc);
     return reductAirHtc;
 }
 
 float ThermalCalculation::outBareTubeAreaCalc(){ //A_o /A_g /A
-    float outBareTubeArea = 2*3.14*(this->config->OUTER_TUBE_DIAM/2)*this->config->AREA_TUBE_LENGTH;
+    float outBareTubeArea = 2.0*3.14*(this->config->OUTER_TUBE_DIAM/2)*this->config->AREA_TUBE_LENGTH;
     this->simuData->airBareTubeArea = outBareTubeArea;
     return outBareTubeArea;
 }
@@ -155,7 +158,7 @@ float ThermalCalculation::inBareTubeAreaCalc(){ //A_in
 float ThermalCalculation::waterHtcCalc(float waterInTemp, float waterOutTemp){ //h_w or //alfa_w
     float waterNusseltNum;
     float waterReynoldNum = waterReynoldsNumbCalc(waterInTemp, waterOutTemp);
-    float avgWaterPrandtlNum = (waterPrandtlNumbCalc(waterInTemp)+waterPrandtlNumbCalc(waterOutTemp))/2;
+    float avgWaterPrandtlNum = (waterPrandtlNumbCalc(waterInTemp, waterOutTemp));
 
     if(waterReynoldNum < 2300){
         waterNusseltNum = laminarWaterFlowNusseltNum(waterReynoldNum, avgWaterPrandtlNum);
@@ -164,13 +167,44 @@ float ThermalCalculation::waterHtcCalc(float waterInTemp, float waterOutTemp){ /
     }
 
     float avgWaterThermalConductCoef = (waterThermalConductCoefCalc(waterInTemp) + waterThermalConductCoefCalc(waterOutTemp))/2;
-    float waterHtc = waterNusseltNum * avgWaterThermalConductCoef / this->config->INNER_TUBE_DIAM;
+    //float waterHtc = waterNusseltNum * avgWaterThermalConductCoef / this->config->INNER_TUBE_DIAM;
+    float waterHtc = 737;
     this->simuData->waterHTC[this->config->CURRENT_ROWS].push_back(waterHtc);
     return waterHtc;
 }
 
 float ThermalCalculation::laminarWaterFlowNusseltNum(float waterReynoldNum, float waterPrandtlNum){
-    float laminarWaterNusselt = 0.924 * (pow(waterPrandtlNum,0.3333)) * (pow(((waterReynoldNum*this->config->INNER_TUBE_DIAM)/(this->config->AREA_TUBE_LENGTH)),0.5));
+    //float laminarWaterNusselt = 0.924 * (pow(waterPrandtlNum,0.3333)) * (pow(((waterReynoldNum*this->config->INNER_TUBE_DIAM)/(this->config->AREA_TUBE_LENGTH)),0.5));
+    //float laminarWaterNusselt = 0.924 * (pow(waterReynoldNum,0.5))*(pow(waterPrandtlNum,0.3333));
+
+    float lengthHE = this->config->HE_LENGTH;
+    float interDim = this->config->INNER_TUBE_DIAM;
+
+    //--------//D.Taler, Obliczenia i Badania experymentalne WC str.93 (Table 3.3)---------
+     float xMax = 4.0*(0.6/interDim)*(1/(waterPrandtlNum*waterReynoldNum));
+    float laminarWaterNusselt1 = -64.83*xMax + 15.8;
+    //-------------------------------------------------------------------------------------
+
+    //VDI Heat Atlas str. 694 eq(11)
+    float laminarWaterNusselt2 = 0.664*(pow(waterPrandtlNum, 1/3.0))*pow(waterReynoldNum*interDim,1/2.0);
+
+    //VDI Heat Atlas str. 694 eq(11)
+    float diL = interDim/lengthHE;
+    float RePrdiL = waterReynoldNum*waterPrandtlNum*diL;
+
+    float Nu1 = 3.66;
+    float Nu2 = 1.615*pow(RePrdiL,1/3.0);
+
+    float Nu3_11 = 2.0/(1.0+(22.0*waterPrandtlNum));
+    float Nu3_1 = pow(Nu3_11,1/6.0);
+    float Nu3_2 = pow(RePrdiL,1/2.0);
+    float Nu3 = Nu3_1*Nu3_2;
+
+    float NuAll = pow(Nu1,3)+pow(0.7,3)+pow((Nu2-0.7),3)+pow(Nu3,3);
+    float laminarWaterNusselt3 = (pow(NuAll, 1/3.0));
+
+    float laminarWaterNusselt = laminarWaterNusselt3;
+
     return laminarWaterNusselt;
 }
 
@@ -239,13 +273,13 @@ float ThermalCalculation::airHtcCalc(float airInTemp, float airOutTemp){ //h_a o
             b = 0.4156;
         }
     } else {
-        if(this->config->CURRENT_ROWS == 1){
+        if(this->config->CURRENT_ROWS == 0){
             a = 0.4217;
             b = 0.47;
-        } else if(this->config->CURRENT_ROWS == 2){
+        } else if(this->config->CURRENT_ROWS == 1){
             a = 0.1305;
             b = 0.6118;
-        } else if(this->config->CURRENT_ROWS == 3){
+        } else if(this->config->CURRENT_ROWS == 2){
             a = 0.0923;
             b = 0.6307;
         } else {
@@ -254,7 +288,7 @@ float ThermalCalculation::airHtcCalc(float airInTemp, float airOutTemp){ //h_a o
         }
     }
 
-    float airNuNumb = a * pow(reynoldsNumb_dhydr,b) * pow(0.7,(1/3));
+    float airNuNumb = a * pow(reynoldsNumb_dhydr,b) * pow(0.7,(1/3.0));
     airHTC = (airNuNumb * avgAirThermalCondCoef)/hydarulicDim;
 
     this->simuData->airBasicHTCAnalPerRow[this->config->CURRENT_ROWS].push_back(airHTC);
@@ -265,7 +299,7 @@ float ThermalCalculation::airHtcCalc(float airInTemp, float airOutTemp){ //h_a o
 }
 
 float ThermalCalculation::bareTubeBetweenFinsAreaCalc(){ //A_mf
-    float bareTipeBetweenFinsArea = 2*3.14*(this->config->OUTER_TUBE_DIAM/2)*(this->config->AREA_TUBE_LENGTH - this->config->FIN_THICK*this->config->FINS_PER_AREA);
+    float bareTipeBetweenFinsArea = 2*3.14*(this->config->OUTER_TUBE_DIAM/2.0)*(this->config->AREA_TUBE_LENGTH - this->config->FIN_THICK*this->config->FINS_PER_AREA);
     this->simuData->airTubeBetweenFinsArea = bareTipeBetweenFinsArea;
     return bareTipeBetweenFinsArea;
 }
@@ -278,14 +312,14 @@ float ThermalCalculation::finAreaCalc(){ //A_f
     float phi = asin(this->config->TUBE_PITCH/(2*OD));
     float gamma = (3.14/2.0) - 2.0*phi;
     float AB = this->config->TUBE_PITCH * tan(gamma);
-    float h_oab = this->config->TUBE_PITCH/2;
+    float h_oab = this->config->TUBE_PITCH/2.0;
     float A_oab = 0.5*AB*h_oab;
 
     float BC = OD * tan(phi);
     float A_obc = 0.25 * BC * OD; //one side fin area, without top fin, because continoues fin and symmetry
 
     float oneSideFinArea = 2.0*A_oab + 4.0*A_obc;
-    float finsArea = 2 * oneSideFinArea * this->config->FINS_PER_AREA;
+    float finsArea = 2.0 * oneSideFinArea * this->config->FINS_PER_AREA;
     this->simuData->airFinsArea = finsArea;
     this->simuData->pipesInRow = this->config->TUBES_IN_ROW;
     return finsArea;
@@ -322,7 +356,7 @@ float ThermalCalculation::airHydraulicDimCalc(){
     float tubeDiam = this->config->OUTER_TUBE_DIAM;
 
     float areaMin = bareTubeLength*(tubePitch-tubeDiam);
-    float bareTubeBetweenArea = 2*3.14*(tubeDiam/2)*(bareTubeLength);
+    float bareTubeBetweenArea = 2*3.14*(tubeDiam/2.0)*(bareTubeLength);
     float finArea = finAreaCalc()/this->config->FINS_PER_AREA;
     float volumeForOnePipe = (finArea/2)*(bareTubeLength);
 
@@ -443,6 +477,17 @@ float ThermalCalculation::waterPrandtlNumbCalc(float waterTemp){ //Pr_w
     float d = 92.381401;
 
     float waterPrandtlNumb = a*exp(-waterTemp/b) + c*exp(-waterTemp/d);
+    this->simuData->waterPrandtlNumb = waterPrandtlNumb;
+    return waterPrandtlNumb; //[-]
+}
+
+float ThermalCalculation::waterPrandtlNumbCalc(float waterTempIn, float waterTempOut){ //Pr_w
+    float avgTemp = (waterTempIn+waterTempOut)/2.0;
+    float specHeat = waterSpecHeatCalc(avgTemp);
+    float dynamicViscosity = waterKinViscoCoefCalc(avgTemp)*waterDensCalc(avgTemp);
+    float thermalConduct = waterThermalConductCoefCalc(avgTemp);
+
+    float waterPrandtlNumb = specHeat*dynamicViscosity/thermalConduct;
     this->simuData->waterPrandtlNumb = waterPrandtlNumb;
     return waterPrandtlNumb; //[-]
 }

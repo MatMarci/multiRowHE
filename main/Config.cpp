@@ -2,7 +2,7 @@
 
 void Config::setOtherInitValues(){
     this->AIR_VELOCITY_BEFORE_HE = (this->AIR_FLOW[0]/3600)/(this->HE_HEIGHT*this->HE_LENGTH);
-    this->TUBES_IN_ROW = (this->HE_HEIGHT/this->ROW_PITCH);
+    this->TUBES_IN_ROW = (this->HE_HEIGHT/this->TUBE_PITCH);
     this->AIR_FLOW_PER_AREA = this->AIR_FLOW[0] / this->CONTROL_AREAS / this->TUBES_IN_ROW;
     this->WATER_FLOW_PER_ROW = this->WATER_FLOW[0]/(this->ROWS);
     this->WATER_FLOW_PER_TUBE = this->WATER_FLOW_PER_ROW/this->TUBES_IN_ROW;
