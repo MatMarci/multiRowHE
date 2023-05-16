@@ -1,1 +1,11 @@
-programFiles/
+.qtc_clangd/
+debug/
+release/
+
+
+main/Makefile
+main/Makefile.Debug
+main/Makefile.Release
+main/target_wrapper.bat
+main/.qmake.stash
+main/usersmatam*
