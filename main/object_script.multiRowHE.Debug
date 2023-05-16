@@ -1,0 +1,14 @@
+debug/ArrayOperation.o
+debug/CalculateButtonLogic.o
+debug/Chart.o
+debug/Config.o
+debug/ControlArea.o
+debug/ControlAreaBuilder.o
+debug/FileParser.o
+debug/ResultsProcessing.o
+debug/SimulationData.o
+debug/ThermalCalculation.o
+debug/main.o
+debug/mainwindow.o
+debug/moc_ThermalCalculation_test.o
+debug/moc_mainwindow.o

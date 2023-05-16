@@ -1,0 +1,14 @@
+release/ArrayOperation.o
+release/CalculateButtonLogic.o
+release/Chart.o
+release/Config.o
+release/ControlArea.o
+release/ControlAreaBuilder.o
+release/FileParser.o
+release/ResultsProcessing.o
+release/SimulationData.o
+release/ThermalCalculation.o
+release/main.o
+release/mainwindow.o
+release/moc_ThermalCalculation_test.o
+release/moc_mainwindow.o
