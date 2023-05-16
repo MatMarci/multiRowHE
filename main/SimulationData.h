@@ -11,17 +11,22 @@ class ControlArea;
 
 class SimulationData{
 
+    //HE params
+    int pipesInRow;
+    float totHeatTransferArea;
+
     //inputData
     float airFlow;
     float waterFlowBeforeHE;
     float waterFlowInOnePipe;
 
     //resultsData
-
     float colburnParam;
     float airNusseltNumb;
+    vector<float> avgAirTempOut;
+    vector<float> avgWaterTempOut;
 
-        //air
+    //air
     float airVelocityInFrontHE;
     float airMaxVelocity;
 
@@ -33,18 +38,33 @@ class SimulationData{
 
     float airReynoldsNumb;
     float airPrandtlNumb;
-    float airBasicHTC;
-    float airReducedHTC;
+    map<int, vector<float>> airBasicHTCAnalPerRow;
+    map<int, vector<float>> airReducedHTCANalPerRow;
+    map<int, vector<float>> airNusseltAnalPerRow;
 
-        //water
+    //Experiment
+    vector <float> waterQsExp;
+    vector <float> waterTempsInExp;
+    vector <float> waterTempsOutExp;
+    float airTempInExp;
+    vector <float> airTempsOutExp;
+    vector <float> airHeatPowersExp;
+
+    //water
     float waterVelocity;
 
     float waterReynoldsNumb;
     float waterPrandtlNumb;
-    float waterHTC;
+    map<int, vector<float>> waterHTC;
 
     //output
-    float airHeatPower;
+    float sumTotalAirHeatPower;
+    vector<float> sumRowAirHeatPower;
+    map<int, vector<float>> airAreaHeatPower;
+
+    vector<float> avgAirHTCperRow;
+    vector<float> avgAirNusseltNumbPerRow;
+
     float waterHeatPower;
     int iteration;
 
@@ -55,11 +75,9 @@ class SimulationData{
     //methods
 
 
-
 public:
     friend class ArrayOperation;
     friend class ThermalCalculation;
     friend class MainWindow;
-
-
+    friend class ResultsProcessing;
 };

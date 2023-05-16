@@ -1,7 +1,7 @@
 /********************************************************************************
 ** Form generated from reading UI file 'mainwindow.ui'
 **
-** Created by: Qt User Interface Compiler version 5.15.0
+** Created by: Qt User Interface Compiler version 6.3.2
 **
 ** WARNING! All changes made in this file will be lost when recompiling UI file!
 ********************************************************************************/
@@ -13,16 +13,15 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QGridLayout>
-#include <QtWidgets/QHeaderView>
 #include <QtWidgets/QLabel>
 #include <QtWidgets/QLineEdit>
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenuBar>
 #include <QtWidgets/QPushButton>
+#include <QtWidgets/QScrollArea>
 #include <QtWidgets/QSplitter>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QTabWidget>
-#include <QtWidgets/QTableWidget>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -86,7 +85,13 @@ public:
     QLabel *label_39;
     QLineEdit *Fin_Efficiency;
     QWidget *general_results;
-    QTableWidget *tempResults;
+    QGridLayout *gridLayout_7;
+    QScrollArea *resultsAreaScroll;
+    QWidget *scrollAreaContent;
+    QWidget *chart;
+    QGridLayout *gridLayout_2;
+    QScrollArea *chartArea;
+    QWidget *scrollAreaContent_2;
     QMenuBar *menubar;
     QStatusBar *statusbar;
 
@@ -94,15 +99,20 @@ public:
     {
         if (MainWindow->objectName().isEmpty())
             MainWindow->setObjectName(QString::fromUtf8("MainWindow"));
-        MainWindow->resize(1016, 606);
+        MainWindow->resize(1225, 612);
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName(QString::fromUtf8("centralwidget"));
         pushButton = new QPushButton(centralwidget);
         pushButton->setObjectName(QString::fromUtf8("pushButton"));
-        pushButton->setGeometry(QRect(900, 20, 93, 28));
+        pushButton->setGeometry(QRect(1110, 20, 93, 28));
         tabWidget = new QTabWidget(centralwidget);
         tabWidget->setObjectName(QString::fromUtf8("tabWidget"));
-        tabWidget->setGeometry(QRect(10, 40, 991, 511));
+        tabWidget->setGeometry(QRect(10, 40, 1201, 521));
+        tabWidget->setTabShape(QTabWidget::Triangular);
+        tabWidget->setElideMode(Qt::ElideMiddle);
+        tabWidget->setUsesScrollButtons(true);
+        tabWidget->setMovable(false);
+        tabWidget->setTabBarAutoHide(false);
         params = new QWidget();
         params->setObjectName(QString::fromUtf8("params"));
         splitter_2 = new QSplitter(params);
@@ -199,6 +209,7 @@ public:
 
         HE_Height = new QLineEdit(layoutWidget1);
         HE_Height->setObjectName(QString::fromUtf8("HE_Height"));
+        HE_Height->setEnabled(true);
 
         gridLayout_4->addWidget(HE_Height, 2, 1, 1, 1);
 
@@ -342,14 +353,39 @@ public:
         tabWidget->addTab(params, QString());
         general_results = new QWidget();
         general_results->setObjectName(QString::fromUtf8("general_results"));
-        tempResults = new QTableWidget(general_results);
-        tempResults->setObjectName(QString::fromUtf8("tempResults"));
-        tempResults->setGeometry(QRect(10, 10, 961, 461));
+        general_results->setAutoFillBackground(true);
+        gridLayout_7 = new QGridLayout(general_results);
+        gridLayout_7->setObjectName(QString::fromUtf8("gridLayout_7"));
+        resultsAreaScroll = new QScrollArea(general_results);
+        resultsAreaScroll->setObjectName(QString::fromUtf8("resultsAreaScroll"));
+        resultsAreaScroll->setWidgetResizable(true);
+        scrollAreaContent = new QWidget();
+        scrollAreaContent->setObjectName(QString::fromUtf8("scrollAreaContent"));
+        scrollAreaContent->setGeometry(QRect(0, 0, 1183, 483));
+        resultsAreaScroll->setWidget(scrollAreaContent);
+
+        gridLayout_7->addWidget(resultsAreaScroll, 0, 0, 1, 1);
+
         tabWidget->addTab(general_results, QString());
+        chart = new QWidget();
+        chart->setObjectName(QString::fromUtf8("chart"));
+        gridLayout_2 = new QGridLayout(chart);
+        gridLayout_2->setObjectName(QString::fromUtf8("gridLayout_2"));
+        chartArea = new QScrollArea(chart);
+        chartArea->setObjectName(QString::fromUtf8("chartArea"));
+        chartArea->setWidgetResizable(true);
+        scrollAreaContent_2 = new QWidget();
+        scrollAreaContent_2->setObjectName(QString::fromUtf8("scrollAreaContent_2"));
+        scrollAreaContent_2->setGeometry(QRect(0, 0, 1183, 483));
+        chartArea->setWidget(scrollAreaContent_2);
+
+        gridLayout_2->addWidget(chartArea, 0, 0, 1, 1);
+
+        tabWidget->addTab(chart, QString());
         MainWindow->setCentralWidget(centralwidget);
         menubar = new QMenuBar(MainWindow);
         menubar->setObjectName(QString::fromUtf8("menubar"));
-        menubar->setGeometry(QRect(0, 0, 1016, 25));
+        menubar->setGeometry(QRect(0, 0, 1225, 17));
         MainWindow->setMenuBar(menubar);
         statusbar = new QStatusBar(MainWindow);
         statusbar->setObjectName(QString::fromUtf8("statusbar"));
@@ -369,23 +405,24 @@ public:
         pushButton->setText(QCoreApplication::translate("MainWindow", "Calculate", nullptr));
         label_38->setText(QCoreApplication::translate("MainWindow", "Air parameters:", nullptr));
         label_17->setText(QCoreApplication::translate("MainWindow", "Temperature - Inlet [C]", nullptr));
-        Air_Temp_In->setText(QCoreApplication::translate("MainWindow", "85", nullptr));
+        Air_Temp_In->setText(QCoreApplication::translate("MainWindow", "23.34", nullptr));
         label_15->setText(QCoreApplication::translate("MainWindow", "Air Flow(s) [m3/h]", nullptr));
-        Air_Flows->setText(QCoreApplication::translate("MainWindow", "80", nullptr));
+        Air_Flows->setText(QCoreApplication::translate("MainWindow", "741.8", nullptr));
         label_40->setText(QCoreApplication::translate("MainWindow", "Water parameters:", nullptr));
         label_41->setText(QCoreApplication::translate("MainWindow", "Temperature - Inlet [C]", nullptr));
-        Water_Temp_In->setText(QCoreApplication::translate("MainWindow", "20", nullptr));
+        Water_Temp_In->setText(QCoreApplication::translate("MainWindow", "40.17", nullptr));
         label_42->setText(QCoreApplication::translate("MainWindow", "Water Flow(s) [kg/s]", nullptr));
-        Water_Flows->setText(QCoreApplication::translate("MainWindow", "1", nullptr));
+        Water_Flows->setText(QCoreApplication::translate("MainWindow", "0.2893", nullptr));
         label_16->setText(QCoreApplication::translate("MainWindow", "Heat Exchanger geometrical parameters:", nullptr));
         label->setText(QCoreApplication::translate("MainWindow", "Length [m]", nullptr));
-        HE_Lenght->setText(QCoreApplication::translate("MainWindow", "0.3", nullptr));
+        HE_Lenght->setText(QCoreApplication::translate("MainWindow", "0.6", nullptr));
         label_2->setText(QCoreApplication::translate("MainWindow", "Height [m]", nullptr));
-        HE_Height->setText(QCoreApplication::translate("MainWindow", "0.3", nullptr));
+        HE_Height->setText(QCoreApplication::translate("MainWindow", "0.352", nullptr));
+        HE_Height->setPlaceholderText(QCoreApplication::translate("MainWindow", "0.324", nullptr));
         label_3->setText(QCoreApplication::translate("MainWindow", "Tube Pitch [mm]", nullptr));
-        Tube_Pitch->setText(QCoreApplication::translate("MainWindow", "25", nullptr));
+        Tube_Pitch->setText(QCoreApplication::translate("MainWindow", "32", nullptr));
         label_4->setText(QCoreApplication::translate("MainWindow", "Row Pitch [mm]", nullptr));
-        Row_Pitch->setText(QCoreApplication::translate("MainWindow", "21.56", nullptr));
+        Row_Pitch->setText(QCoreApplication::translate("MainWindow", "27.71", nullptr));
         label_5->setText(QCoreApplication::translate("MainWindow", "Rows [-]", nullptr));
         Rows->setText(QCoreApplication::translate("MainWindow", "4", nullptr));
         label_13->setText(QCoreApplication::translate("MainWindow", "Control Areas [-]", nullptr));
@@ -394,19 +431,20 @@ public:
         label_12->setText(QCoreApplication::translate("MainWindow", "Material", nullptr));
         comboBox->setCurrentText(QString());
         label_14->setText(QCoreApplication::translate("MainWindow", "Outer Diameter [mm]", nullptr));
-        Tube_Outer_Diameter->setText(QCoreApplication::translate("MainWindow", "10", nullptr));
+        Tube_Outer_Diameter->setText(QCoreApplication::translate("MainWindow", "12", nullptr));
         label_18->setText(QCoreApplication::translate("MainWindow", "Wall Thickness [mm]", nullptr));
-        Tube_Wall_Thickness->setText(QCoreApplication::translate("MainWindow", "0.8", nullptr));
+        Tube_Wall_Thickness->setText(QCoreApplication::translate("MainWindow", "0.35", nullptr));
         label_34->setText(QCoreApplication::translate("MainWindow", "Fins parameters:", nullptr));
         label_36->setText(QCoreApplication::translate("MainWindow", "Material", nullptr));
         label_37->setText(QCoreApplication::translate("MainWindow", "Fin Pitch [mm]", nullptr));
         Fin_Pitch->setText(QCoreApplication::translate("MainWindow", "3", nullptr));
         label_35->setText(QCoreApplication::translate("MainWindow", "Fin Thickness [mm]", nullptr));
-        Fin_Thickness->setText(QCoreApplication::translate("MainWindow", "0.14", nullptr));
+        Fin_Thickness->setText(QCoreApplication::translate("MainWindow", "0.2", nullptr));
         label_39->setText(QCoreApplication::translate("MainWindow", "Fin Efficiency [-]", nullptr));
-        Fin_Efficiency->setText(QCoreApplication::translate("MainWindow", "0.8765", nullptr));
-        tabWidget->setTabText(tabWidget->indexOf(params), QCoreApplication::translate("MainWindow", "Tab 1", nullptr));
-        tabWidget->setTabText(tabWidget->indexOf(general_results), QCoreApplication::translate("MainWindow", "Tab 2", nullptr));
+        Fin_Efficiency->setText(QCoreApplication::translate("MainWindow", "-", nullptr));
+        tabWidget->setTabText(tabWidget->indexOf(params), QCoreApplication::translate("MainWindow", "Parameters", nullptr));
+        tabWidget->setTabText(tabWidget->indexOf(general_results), QCoreApplication::translate("MainWindow", "General Results", nullptr));
+        tabWidget->setTabText(tabWidget->indexOf(chart), QCoreApplication::translate("MainWindow", "Page", nullptr));
     } // retranslateUi
 
 };
