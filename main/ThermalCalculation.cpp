@@ -136,7 +136,7 @@ float ThermalCalculation::reductAirHtcCalc(float airInTemp, float airOutTemp){ /
     float finsArea = finAreaCalc(); //A_f
     float outBareTubeArea = outBareTubeAreaCalc();  //A_o
     //float finEff = this->config->FIN_EFF;
-    float finEff = (-1.0*pow(10,-8)*pow(airHtc,3))+(1.0*pow(10,-5)*pow(airHtc,2))-(0.004*airHtc) + 0.9939;
+    float finEff = 0.85*((-1.0*pow(10,-8)*pow(airHtc,3))+(1.0*pow(10,-5)*pow(airHtc,2))-(0.004*airHtc) + 0.9939);
     this->config->FIN_EFF = finEff;
 
     float reductAirHtc = airHtc * ((bareTubeBetweenFinsArea/outBareTubeArea)+(finEff*finsArea/outBareTubeArea));
@@ -167,8 +167,8 @@ float ThermalCalculation::waterHtcCalc(float waterInTemp, float waterOutTemp){ /
     }
 
     float avgWaterThermalConductCoef = (waterThermalConductCoefCalc(waterInTemp) + waterThermalConductCoefCalc(waterOutTemp))/2;
-    //float waterHtc = waterNusseltNum * avgWaterThermalConductCoef / this->config->INNER_TUBE_DIAM;
-    float waterHtc = 737;
+    float waterHtc = waterNusseltNum * avgWaterThermalConductCoef / this->config->INNER_TUBE_DIAM;
+    //float waterHtc = 737;
     this->simuData->waterHTC[this->config->CURRENT_ROWS].push_back(waterHtc);
     return waterHtc;
 }
@@ -213,9 +213,16 @@ float ThermalCalculation::transientAndTurbulentWaterFlowNusseltNum(float waterRe
     float x2 = 1.08;
     float x3 = 12.39;
     float waterFricCoef = waterFricCoefCalc(waterReynoldNum);
-
     float transientAndTurbulentWaterNusselt = 4.36 + (((waterFricCoef/8)*(waterReynoldNum-2300)*(pow(waterPrandtlNum,x1))/((x2)+(x3*pow((waterFricCoef/8),0.5)*((pow(waterPrandtlNum,2/3))-1)))));
-    return transientAndTurbulentWaterNusselt;
+
+    float transientAndTurbulentWaterNusselt2;
+    if(waterPrandtlNum >3){
+        transientAndTurbulentWaterNusselt2 = 0.00881*pow(waterReynoldNum,0.8991)*pow(waterPrandtlNum,0.3911)*(1+pow((this->config->OUTER_TUBE_DIAM/this->config->HE_LENGTH),(2/3)));
+    } else {
+        transientAndTurbulentWaterNusselt2 = 0.01253*pow(waterReynoldNum,0.8413)*pow(waterPrandtlNum,0.6179)*(1+pow((this->config->OUTER_TUBE_DIAM/this->config->HE_LENGTH),(2/3)));
+    }
+
+    return transientAndTurbulentWaterNusselt2;
 }
 
 float ThermalCalculation::waterFricCoefCalc(float waterReynoldNum){
@@ -260,31 +267,31 @@ float ThermalCalculation::airHtcCalc(float airInTemp, float airOutTemp){ //h_a o
 
     if(reynoldsNumb_dhydr < 1400){
         if(this->config->CURRENT_ROWS == 0){
-            a = 1.4001;
-            b = 0.3053;
+            a = 0.8184;
+            b = 0.3622;
         } else if(this->config->CURRENT_ROWS == 1){
-            a = 0.9478;
-            b = 0.3386;
+            a = 0.4803;
+            b = 0.4344;
         } else if(this->config->CURRENT_ROWS == 2){
-            a = 1.0403;
-            b = 0.3025;
+            a = 0.3625;
+            b = 0.4592;
         } else {
-            a = 0.523;
-            b = 0.4156;
+            a = 0.7012;
+            b = 0.3773;
         }
     } else {
         if(this->config->CURRENT_ROWS == 0){
-            a = 0.4217;
-            b = 0.47;
+            a = 0.6325;
+            b = 0.3972;
         } else if(this->config->CURRENT_ROWS == 1){
-            a = 0.1305;
-            b = 0.6118;
+            a = 0.2283;
+            b = 0.5359;
         } else if(this->config->CURRENT_ROWS == 2){
-            a = 0.0923;
-            b = 0.6307;
+            a = 0.1645;
+            b = 0.5698;
         } else {
-            a = 0.1282;
-            b = 0.6145;
+            a = 0.2732;
+            b = 0.5111;
         }
     }
 

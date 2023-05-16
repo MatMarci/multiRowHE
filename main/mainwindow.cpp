@@ -107,7 +107,7 @@ void MainWindow::on_pushButton_clicked()
 
         QTableWidget *generalResults = new QTableWidget();
         generalResults->verticalScrollBar()->setDisabled(true);
-        generalResults->setMinimumHeight(600);
+        generalResults->setMinimumHeight(700);
         generalResults->setRowCount(20);
         generalResults->setColumnCount(8);
 

@@ -48,7 +48,7 @@ void ResultsProcessing::airNusseltPerRowCalc(){
         float qWR4 = qWR3 + (QR4/tubesInRow);
         this->simuData->waterQsExp = {qWR1, qWR2, qWR3, qWR4};
         this->simuData->airHeatPowersExp = {QR1, QR2, QR3, QR4};
-        this->simuData->waterTempsInExp = {40.17,40.17,40.17,40.17};
+        this->simuData->waterTempsInExp = {60.17,60.17,60.17,60.17};
         this->simuData->waterTempsOutExp = {37.17, 37.89, 38.36, 38.76};
 
         this->simuData->airTempInExp = 23.34;
@@ -115,11 +115,11 @@ float ResultsProcessing::airUCoefBackwardCalc(int row){
     //float airHeatPower = this->simuData->sumRowAirHeatPower[row]/this->config->TUBES_IN_ROW;
     //float mw_cw = waterMassFlow*avgWaterSpecHeat;
 
-    float etaError = 0.001;
+    float etaError = 1.0;
     float errorCalc;
     float airTempOutCalc = 0;
     float Ucoef =100;
-    float step = 0.1;
+    float step = 1.0;
 
     float Na = 0;
     //float Nw = (Ucoef*bareTubeArea)/(mw_cw);

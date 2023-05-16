@@ -5,8 +5,8 @@
 
 const int ROWS = 4-1; //0,1,2,3
 const int CONTROL_AREAS = 5-1; //areas in one row, 0,1,2,3,4
-const float INIT_AIR_TEMP = 23.34;
-const float INIT_WATER_TEMP = 40.17;
+const float INIT_AIR_TEMP = 24.2;
+const float INIT_WATER_TEMP = 62.39;
 
 SimulationData* ArrayOperation::initalizeModel(bool isFlowAlternately){
     string areaName;

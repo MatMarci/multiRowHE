@@ -8,3 +8,4 @@ main/Makefile.Debug
 main/Makefile.Release
 main/target_wrapper.bat
 main/.qmake.stash
+main/usersmatam*
